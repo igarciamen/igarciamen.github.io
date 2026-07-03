@@ -237,6 +237,20 @@
 		.success-message.show {
 			display: block;
 		}
+
+		.error-message {
+			display: none;
+			background-color: #f8d7da;
+			color: #721c24;
+			padding: 15px;
+			border-radius: 4px;
+			margin-bottom: 20px;
+			border: 1px solid #f5c6cb;
+		}
+
+		.error-message.show {
+			display: block;
+		}
 	</style>
 </head>
 <body>
@@ -260,6 +274,9 @@
 					</li>
 					<li class="nav-item">
 						<a class="nav-link active" href="contacto.html">Contacto</a>
+					</li>
+					<li class="nav-item" id="adminMenuitem" style="display: none;">
+						<a class="nav-link" href="admin.html">Panel Admin</a>
 					</li>
 				</ul>
 			</div>
@@ -312,7 +329,10 @@
 			<div class="contact-form">
 				<h2>Envíame un Mensaje</h2>
 				<div class="success-message" id="successMessage">
-					¡Gracias! Tu mensaje ha sido enviado correctamente. Te responderé pronto.
+					✅ ¡Gracias! Tu mensaje ha sido enviado correctamente. Te responderé pronto.
+				</div>
+				<div class="error-message" id="errorMessage">
+					❌ Error al enviar el mensaje. Por favor, intenta de nuevo.
 				</div>
 				<form onsubmit="handleContactForm(event)">
 					<div class="form-group">
@@ -356,17 +376,23 @@
 			<h2>Login</h2>
 			<form onsubmit="handleLogin(event)">
 				<div class="form-group">
-					<label for="email">Email:</label>
-					<input type="email" id="email" name="email" required>
+					<label for="loginEmail">Email:</label>
+					<input type="email" id="loginEmail" name="email" required>
 				</div>
 				<div class="form-group">
-					<label for="password">Password:</label>
-					<input type="password" id="password" name="password" required>
+					<label for="loginPassword">Password:</label>
+					<input type="password" id="loginPassword" name="password" required>
 				</div>
+				<div id="loginError" style="color: #dc3545; margin-top: 10px; display: none;"></div>
 				<div class="form-group">
 					<button type="submit">Login</button>
 				</div>
 			</form>
+			<p style="margin-top: 15px; font-size: 12px; color: #666;">
+				<strong>Credenciales de prueba:</strong><br>
+				Email: admin@misitio.com<br>
+				Contraseña: admin123
+			</p>
 		</div>
 	</div>
 
@@ -375,7 +401,21 @@
 	<script>
 		const loginModal = document.getElementById('loginModal');
 
+		// Credenciales de admin
+		const adminCredentials = {
+			email: 'admin@misitio.com',
+			password: 'admin123'
+		};
+
+		// Verificar sesión al cargar
+		window.addEventListener('DOMContentLoaded', () => {
+			checkUserSession();
+		});
+
 		function openLoginModal() {
+			document.getElementById('loginError').style.display = 'none';
+			document.getElementById('loginEmail').value = '';
+			document.getElementById('loginPassword').value = '';
 			loginModal.classList.add('active');
 		}
 
@@ -385,36 +425,87 @@
 
 		function handleLogin(event) {
 			event.preventDefault();
-			const email = document.getElementById('email').value;
-			const password = document.getElementById('password').value;
-			alert(`Login attempt with email: ${email}`);
-			// Aquí puedes agregar lógica de autenticación
-			closeLoginModal();
-			document.getElementById('email').value = '';
-			document.getElementById('password').value = '';
+			const email = document.getElementById('loginEmail').value;
+			const password = document.getElementById('loginPassword').value;
+			const errorDiv = document.getElementById('loginError');
+
+			if (email === adminCredentials.email && password === adminCredentials.password) {
+				localStorage.setItem('userLogged', JSON.stringify({
+					email: email,
+					isAdmin: true,
+					loginTime: new Date().toLocaleString()
+				}));
+
+				alert('¡Bienvenido Admin!');
+				closeLoginModal();
+				checkUserSession();
+			} else {
+				errorDiv.textContent = 'Email o contraseña incorrectos';
+				errorDiv.style.display = 'block';
+				document.getElementById('loginPassword').value = '';
+			}
+		}
+
+		function checkUserSession() {
+			const userLogged = localStorage.getItem('userLogged');
+			const adminMenu = document.getElementById('adminMenuitem');
+			
+			if (userLogged && adminMenu) {
+				adminMenu.style.display = 'block';
+			}
 		}
 
 		function handleContactForm(event) {
 			event.preventDefault();
 			const name = document.getElementById('name').value;
 			const email = document.getElementById('email').value;
+			const phone = document.getElementById('phone').value;
 			const subject = document.getElementById('subject').value;
 			const message = document.getElementById('message').value;
 			
-			// Mostrar mensaje de éxito
-			const successMessage = document.getElementById('successMessage');
-			successMessage.classList.add('show');
-
-			// Limpiar formulario
-			document.querySelector('form').reset();
-
-			// Ocultar mensaje después de 5 segundos
-			setTimeout(() => {
-				successMessage.classList.remove('show');
-			}, 5000);
-
-			// Aquí puedes enviar los datos a un servidor
-			console.log('Formulario enviado:', { name, email, subject, message });
+			try {
+				// Obtener mensajes previos
+				let contacts = JSON.parse(localStorage.getItem('contactMessages')) || [];
+				
+				// Crear nuevo mensaje
+				const newContact = {
+					id: Date.now(),
+					name: name,
+					email: email,
+					phone: phone,
+					subject: subject,
+					message: message,
+					timestamp: new Date().toLocaleString()
+				};
+				
+				// Agregar mensaje al array
+				contacts.push(newContact);
+				
+				// Guardar en localStorage
+				localStorage.setItem('contactMessages', JSON.stringify(contacts));
+				
+				// Mostrar mensaje de éxito
+				const successMessage = document.getElementById('successMessage');
+				successMessage.classList.add('show');
+				
+				// Limpiar formulario
+				document.querySelector('form').reset();
+				
+				// Ocultar mensaje después de 5 segundos
+				setTimeout(() => {
+					successMessage.classList.remove('show');
+				}, 5000);
+				
+				console.log('Mensaje guardado correctamente:', newContact);
+			} catch (error) {
+				const errorMessage = document.getElementById('errorMessage');
+				errorMessage.classList.add('show');
+				console.error('Error al guardar mensaje:', error);
+				
+				setTimeout(() => {
+					errorMessage.classList.remove('show');
+				}, 5000);
+			}
 		}
 
 		// Cerrar el modal si se hace clic fuera del contenido
