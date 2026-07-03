@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Inicio</title>
+	<!-- Bootstrap CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f0f0f0;
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+
+		main {
+			flex: 1;
+			padding: 20px;
+		}
+
+		h1 {
+			color: #333;
+			margin-bottom: 20px;
+		}
+
+		h2 {
+			margin-bottom: 20px;
+			color: #333;
+		}
+
+		/* Footer Styles */
+		footer {
+			background-color: #f8f9fa;
+			border-top: 1px solid #dee2e6;
+			padding: 20px;
+			text-align: center;
+			font-size: 14px;
+		}
+
+		.private-access-link {
+			color: #6c757d;
+			text-decoration: none;
+			transition: color 0.3s;
+			cursor: pointer;
+		}
+
+		.private-access-link:hover {
+			color: #007bff;
+			text-decoration: underline;
+		}
+
+		/* Modal Styles */
+		.modal {
+			display: none;
+			position: fixed;
+			z-index: 1;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(0, 0, 0, 0.4);
+		}
+
+		.modal.active {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.modal-content {
+			background-color: white;
+			padding: 30px;
+			border-radius: 8px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+			width: 90%;
+			max-width: 400px;
+		}
+
+		.close {
+			color: #aaa;
+			float: right;
+			font-size: 28px;
+			font-weight: bold;
+			cursor: pointer;
+			transition: color 0.3s;
+		}
+
+		.close:hover,
+		.close:focus {
+			color: #000;
+		}
+
+		.form-group {
+			margin-bottom: 15px;
+		}
+
+		.form-group label {
+			display: block;
+			margin-bottom: 5px;
+			color: #333;
+			font-weight: bold;
+		}
+
+		.form-group input {
+			width: 100%;
+			padding: 10px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			font-size: 14px;
+		}
+
+		.form-group input:focus {
+			outline: none;
+			border-color: #007bff;
+			box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+		}
+
+		.form-group button {
+			width: 100%;
+			padding: 10px;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			font-size: 16px;
+			font-weight: bold;
+			transition: background-color 0.3s;
+		}
+
+		.form-group button:hover {
+			background-color: #0056b3;
+		}
+
+		.hero {
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			color: white;
+			padding: 60px 20px;
+			border-radius: 8px;
+			margin-bottom: 40px;
+			text-align: center;
+		}
+
+		.hero h1 {
+			color: white;
+			font-size: 2.5em;
+			margin-bottom: 10px;
+		}
+
+		.hero p {
+			font-size: 1.2em;
+			margin-bottom: 20px;
+		}
+
+		.btn-custom {
+			display: inline-block;
+			padding: 10px 20px;
+			background-color: white;
+			color: #667eea;
+			text-decoration: none;
+			border-radius: 4px;
+			font-weight: bold;
+			transition: background-color 0.3s;
+		}
+
+		.btn-custom:hover {
+			background-color: #f0f0f0;
+		}
+	</style>
+</head>
+<body>
+	<!-- Navbar Bootstrap -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="index.html">Mi Sitio</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarNav">
+				<ul class="navbar-nav ms-auto">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href="inicio.html">Inicio</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="sobre.html">Sobre Mí</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="servicios.html">Servicios</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="contacto.html">Contacto</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Contenido Principal -->
+	<main class="container">
+		<div class="hero">
+			<h1>Bienvenido a Mi Sitio</h1>
+			<p>Tu destino para soluciones innovadoras y servicios de calidad</p>
+			<a href="servicios.html" class="btn-custom">Conocer Servicios</a>
+		</div>
+
+		<section>
+			<h2>¿Quién Soy?</h2>
+			<p>Soy un profesional dedicado a ofrecer las mejores soluciones para tus necesidades. Con experiencia en diversos campos, estoy aquí para ayudarte a alcanzar tus objetivos.</p>
+		</section>
+
+		<section>
+			<h2>Últimas Noticias</h2>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Novedad 1</h5>
+							<p class="card-text">Descubre nuestras nuevas características y mejoras.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Novedad 2</h5>
+							<p class="card-text">Conoce nuestros últimos proyectos y logros.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="card">
+						<div class="card-body">
+							<h5 class="card-title">Novedad 3</h5>
+							<p class="card-text">Lee nuestros artículos más recientes.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<!-- Footer con enlace de acceso privado -->
+	<footer>
+		<p>&copy; 2024 Mi Sitio. Todos los derechos reservados.</p>
+		<p><a class="private-access-link" onclick="openLoginModal()">acceso privado</a></p>
+	</footer>
+
+	<!-- Modal de Login -->
+	<div id="loginModal" class="modal">
+		<div class="modal-content">
+			<span class="close" onclick="closeLoginModal()">&times;</span>
+			<h2>Login</h2>
+			<form onsubmit="handleLogin(event)">
+				<div class="form-group">
+					<label for="email">Email:</label>
+					<input type="email" id="email" name="email" required>
+				</div>
+				<div class="form-group">
+					<label for="password">Password:</label>
+					<input type="password" id="password" name="password" required>
+				</div>
+				<div class="form-group">
+					<button type="submit">Login</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<!-- Bootstrap JS -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		const loginModal = document.getElementById('loginModal');
+
+		function openLoginModal() {
+			loginModal.classList.add('active');
+		}
+
+		function closeLoginModal() {
+			loginModal.classList.remove('active');
+		}
+
+		function handleLogin(event) {
+			event.preventDefault();
+			const email = document.getElementById('email').value;
+			const password = document.getElementById('password').value;
+			alert(`Login attempt with email: ${email}`);
+			// Aquí puedes agregar lógica de autenticación
+			closeLoginModal();
+			document.getElementById('email').value = '';
+			document.getElementById('password').value = '';
+		}
+
+		// Cerrar el modal si se hace clic fuera del contenido
+		window.onclick = function(event) {
+			if (event.target === loginModal) {
+				closeLoginModal();
+			}
+		}
+	</script>
+</body>
+</html>
