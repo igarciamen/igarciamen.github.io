@@ -139,6 +139,49 @@
 			color: #007bff;
 			text-decoration: underline;
 		}
+
+		.error-message {
+			color: #dc3545;
+			margin-top: 10px;
+			font-size: 14px;
+		}
+
+		.admin-button {
+			background-color: #28a745;
+			color: white;
+			padding: 8px 16px;
+			border-radius: 4px;
+			text-decoration: none;
+			cursor: pointer;
+			display: inline-block;
+			margin-top: 10px;
+			transition: background-color 0.3s;
+		}
+
+		.admin-button:hover {
+			background-color: #218838;
+			text-decoration: none;
+			color: white;
+		}
+
+		.logout-button {
+			background-color: #dc3545;
+			color: white;
+			padding: 8px 16px;
+			border-radius: 4px;
+			cursor: pointer;
+			border: none;
+			transition: background-color 0.3s;
+		}
+
+		.logout-button:hover {
+			background-color: #c82333;
+		}
+
+		.user-info {
+			color: #333;
+			font-weight: bold;
+		}
 	</style>
 </head>
 <body>
@@ -163,6 +206,9 @@
 					<li class="nav-item">
 						<a class="nav-link" href="contacto.html">Contacto</a>
 					</li>
+					<li class="nav-item" id="adminMenuitem" style="display: none;">
+						<a class="nav-link" href="admin.html">Panel Admin</a>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -172,6 +218,7 @@
 	<main class="container">
 		<h1>Bienvenido</h1>
 		<p>Este es el contenido principal de tu sitio web.</p>
+		<div id="userStatusDiv"></div>
 	</main>
 
 	<!-- Footer con enlace de acceso privado -->
@@ -194,10 +241,16 @@
 					<label for="password">Password:</label>
 					<input type="password" id="password" name="password" required>
 				</div>
+				<div id="loginError" class="error-message"></div>
 				<div class="form-group">
 					<button type="submit">Login</button>
 				</div>
 			</form>
+			<p style="margin-top: 15px; font-size: 12px; color: #666;">
+				<strong>Credenciales de prueba:</strong><br>
+				Email: admin@misitio.com<br>
+				Contraseña: admin123
+			</p>
 		</div>
 	</div>
 
@@ -206,7 +259,21 @@
 	<script>
 		const loginModal = document.getElementById('loginModal');
 
+		// Credenciales de admin
+		const adminCredentials = {
+			email: 'admin@misitio.com',
+			password: 'admin123'
+		};
+
+		// Verificar si hay sesión activa al cargar la página
+		window.addEventListener('DOMContentLoaded', () => {
+			checkUserSession();
+		});
+
 		function openLoginModal() {
+			document.getElementById('loginError').textContent = '';
+			document.getElementById('email').value = '';
+			document.getElementById('password').value = '';
 			loginModal.classList.add('active');
 		}
 
@@ -218,11 +285,51 @@
 			event.preventDefault();
 			const email = document.getElementById('email').value;
 			const password = document.getElementById('password').value;
-			alert(`Login attempt with email: ${email}`);
-			// Aquí puedes agregar lógica de autenticación
-			closeLoginModal();
-			document.getElementById('email').value = '';
-			document.getElementById('password').value = '';
+			const errorDiv = document.getElementById('loginError');
+
+			// Validar credenciales
+			if (email === adminCredentials.email && password === adminCredentials.password) {
+				// Guardar sesión en localStorage
+				localStorage.setItem('userLogged', JSON.stringify({
+					email: email,
+					isAdmin: true,
+					loginTime: new Date().toLocaleString()
+				}));
+
+				alert('¡Bienvenido Admin! Ahora tienes acceso al panel de administración.');
+				closeLoginModal();
+				checkUserSession();
+			} else {
+				errorDiv.textContent = '❌ Email o contraseña incorrectos';
+				document.getElementById('password').value = '';
+			}
+		}
+
+		function checkUserSession() {
+			const userLogged = localStorage.getItem('userLogged');
+			const adminMenu = document.getElementById('adminMenuitem');
+			const userStatusDiv = document.getElementById('userStatusDiv');
+
+			if (userLogged) {
+				const user = JSON.parse(userLogged);
+				adminMenu.style.display = 'block';
+				userStatusDiv.innerHTML = `
+					<div style="background-color: #d4edda; padding: 15px; border-radius: 4px; margin-top: 20px; border: 1px solid #c3e6cb;">
+						<p class="user-info">✅ Sesión activa como: ${user.email}</p>
+						<button class="logout-button" onclick="logout()">Cerrar Sesión</button>
+					</div>
+				`;
+			} else {
+				adminMenu.style.display = 'none';
+				userStatusDiv.innerHTML = '';
+			}
+		}
+
+		function logout() {
+			localStorage.removeItem('userLogged');
+			alert('Sesión cerrada correctamente');
+			checkUserSession();
+			window.location.href = 'index.html';
 		}
 
 		// Cerrar el modal si se hace clic fuera del contenido
