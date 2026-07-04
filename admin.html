@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panel admin — Pablo</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<div class="admin-topbar">
+		<div class="wrap">
+			<div>
+				<h1>Panel de administración</h1>
+				<span class="who mono" id="whoami">verificando sesión…</span>
+			</div>
+			<button class="btn btn-outline" style="border-color:#3a3d4a; color:#fff;" onclick="logout()">Cerrar sesión</button>
+		</div>
+	</div>
+
+	<main>
+		<section class="admin-section">
+			<div class="wrap" style="max-width: 640px;">
+				<h2 id="formTitle">Agregar proyecto</h2>
+				<div id="statusMsg" class="status-msg"></div>
+				<form id="projectForm" onsubmit="handleSubmit(event)">
+					<div class="field">
+						<label for="title">Título del proyecto</label>
+						<input type="text" id="title" required>
+					</div>
+					<div class="field">
+						<label for="imageUrl">URL de la imagen</label>
+						<input type="url" id="imageUrl" placeholder="https://..." required>
+						<div class="hint">Sube la imagen a GitHub, Imgur o similar y pega aquí el enlace directo.</div>
+					</div>
+					<div class="field">
+						<label for="description">Descripción técnica</label>
+						<textarea id="description" rows="5" required placeholder="Qué resuelve el proyecto, decisiones de arquitectura, retos técnicos..."></textarea>
+					</div>
+					<div class="field">
+						<label for="stack">Stack tecnológico</label>
+						<input type="text" id="stack" placeholder="React, Node.js, PostgreSQL" required>
+						<div class="hint">Sepáralos con comas.</div>
+					</div>
+					<div class="field">
+						<label for="githubUrl">Enlace a GitHub</label>
+						<input type="url" id="githubUrl" placeholder="https://github.com/...">
+					</div>
+					<div class="field">
+						<label for="demoUrl">Enlace a demo (opcional)</label>
+						<input type="url" id="demoUrl" placeholder="https://...">
+					</div>
+					<div style="display:flex; gap: 12px;">
+						<button type="submit" class="btn" id="submitBtn">Publicar proyecto</button>
+						<button type="button" class="btn btn-outline" id="cancelEditBtn" onclick="resetForm()" style="display:none;">Cancelar edición</button>
+					</div>
+				</form>
+			</div>
+		</section>
+
+		<section class="admin-section" style="border-bottom: none;">
+			<div class="wrap">
+				<h2>Proyectos publicados</h2>
+				<div id="projectList">
+					<p class="mono" style="color: var(--ink-faint); font-size: 13px;">cargando…</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<script type="module">
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject } from './firebase-config.js';
+
+		// Protección real: si no hay sesión de Firebase, fuera de aquí
+		watchAuth((user) => {
+			if (!user) {
+				alert('Acceso denegado. Inicia sesión como administrador.');
+				window.location.href = 'index.html';
+				return;
+			}
+			document.getElementById('whoami').textContent = '👤 ' + user.email;
+		});
+
+		window.logout = function () {
+			firebaseLogout().then(() => { window.location.href = 'index.html'; });
+		};
+
+		function escapeHtml(str) {
+			const div = document.createElement('div');
+			div.textContent = str || '';
+			return div.innerHTML;
+		}
+
+		function showStatus(message, type) {
+			const el = document.getElementById('statusMsg');
+			el.textContent = message;
+			el.className = 'status-msg show ' + type;
+			setTimeout(() => { el.classList.remove('show'); }, 4000);
+		}
+
+		let editingId = null;
+		let allProjects = [];
+
+		watchProjects((projects) => {
+			allProjects = projects;
+			renderList(projects);
+		});
+
+		function renderList(projects) {
+			const list = document.getElementById('projectList');
+			if (!projects.length) {
+				list.innerHTML = `<p class="mono" style="color: var(--ink-faint); font-size: 13px;">Todavía no agregaste ningún proyecto. Usa el formulario de arriba.</p>`;
+				return;
+			}
+			list.innerHTML = projects.map(p => `
+				<div class="proj-row">
+					<img src="${escapeHtml(p.imageUrl)}" alt="">
+					<div class="info">
+						<h4>${escapeHtml(p.title)}</h4>
+						<span class="mono">${(p.stack || []).join(' · ')}</span>
+					</div>
+					<div class="actions">
+						<button class="btn btn-outline btn-sm" onclick="editProject('${p.id}')">Editar</button>
+						<button class="btn btn-danger btn-sm" onclick="removeProject('${p.id}')">Eliminar</button>
+					</div>
+				</div>
+			`).join('');
+		}
+
+		window.editProject = function (id) {
+			const p = allProjects.find(x => x.id === id);
+			if (!p) return;
+			editingId = id;
+			document.getElementById('title').value = p.title || '';
+			document.getElementById('imageUrl').value = p.imageUrl || '';
+			document.getElementById('description').value = p.description || '';
+			document.getElementById('stack').value = (p.stack || []).join(', ');
+			document.getElementById('githubUrl').value = p.githubUrl || '';
+			document.getElementById('demoUrl').value = p.demoUrl || '';
+			document.getElementById('formTitle').textContent = 'Editar proyecto';
+			document.getElementById('submitBtn').textContent = 'Guardar cambios';
+			document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		};
+
+		window.resetForm = function () {
+			editingId = null;
+			document.getElementById('projectForm').reset();
+			document.getElementById('formTitle').textContent = 'Agregar proyecto';
+			document.getElementById('submitBtn').textContent = 'Publicar proyecto';
+			document.getElementById('cancelEditBtn').style.display = 'none';
+		};
+
+		window.removeProject = function (id) {
+			if (!confirm('¿Eliminar este proyecto? Esta acción no se puede deshacer.')) return;
+			deleteProject(id)
+				.then(() => showStatus('Proyecto eliminado.', 'ok'))
+				.catch(() => showStatus('No se pudo eliminar. Intenta de nuevo.', 'err'));
+		};
+
+		window.handleSubmit = function (event) {
+			event.preventDefault();
+			const data = {
+				title: document.getElementById('title').value.trim(),
+				imageUrl: document.getElementById('imageUrl').value.trim(),
+				description: document.getElementById('description').value.trim(),
+				stack: document.getElementById('stack').value.split(',').map(s => s.trim()).filter(Boolean),
+				githubUrl: document.getElementById('githubUrl').value.trim(),
+				demoUrl: document.getElementById('demoUrl').value.trim()
+			};
+
+			const action = editingId ? updateProject(editingId, data) : addProject(data);
+			action
+				.then(() => {
+					showStatus(editingId ? 'Cambios guardados.' : 'Proyecto publicado.', 'ok');
+					resetForm();
+				})
+				.catch(() => showStatus('Algo falló al guardar. Intenta de nuevo.', 'err'));
+		};
+	</script>
+</body>
+</html>
