@@ -175,7 +175,10 @@
 					showStatus(editingId ? 'Cambios guardados.' : 'Proyecto publicado.', 'ok');
 					resetForm();
 				})
-				.catch(() => showStatus('Algo falló al guardar. Intenta de nuevo.', 'err'));
+				.catch((err) => {
+					console.error('Error al guardar en Firestore:', err);
+					showStatus('Algo falló al guardar. Intenta de nuevo.', 'err');
+				});
 		};
 	</script>
 </body>
