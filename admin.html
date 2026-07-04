@@ -29,9 +29,14 @@
 						<input type="text" id="title" required>
 					</div>
 					<div class="field">
-						<label for="imageUrl">URL de la imagen</label>
+						<label for="imageUrl">URL de la imagen (miniatura)</label>
 						<input type="url" id="imageUrl" placeholder="https://..." required>
-						<div class="hint">Sube la imagen a GitHub, Imgur o similar y pega aquí el enlace directo.</div>
+						<div class="hint">Se usa en la tarjeta del listado de proyectos. Sube la imagen a GitHub, Imgur o similar y pega aquí el enlace directo.</div>
+					</div>
+					<div class="field">
+						<label for="modalImageUrl">URL de la imagen (modal, opcional)</label>
+						<input type="url" id="modalImageUrl" placeholder="https://...">
+						<div class="hint">Se muestra al abrir el detalle del proyecto. Si la dejas vacía, se usa la miniatura.</div>
 					</div>
 					<div class="field">
 						<label for="description">Descripción técnica</label>
@@ -133,6 +138,7 @@
 			editingId = id;
 			document.getElementById('title').value = p.title || '';
 			document.getElementById('imageUrl').value = p.imageUrl || '';
+			document.getElementById('modalImageUrl').value = p.modalImageUrl || '';
 			document.getElementById('description').value = p.description || '';
 			document.getElementById('stack').value = (p.stack || []).join(', ');
 			document.getElementById('githubUrl').value = p.githubUrl || '';
@@ -163,6 +169,7 @@
 			const data = {
 				title: document.getElementById('title').value.trim(),
 				imageUrl: document.getElementById('imageUrl').value.trim(),
+				modalImageUrl: document.getElementById('modalImageUrl').value.trim(),
 				description: document.getElementById('description').value.trim(),
 				stack: document.getElementById('stack').value.split(',').map(s => s.trim()).filter(Boolean),
 				githubUrl: document.getElementById('githubUrl').value.trim(),
