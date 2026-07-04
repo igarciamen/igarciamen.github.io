@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Pablo — Desarrollador de software</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<nav class="nav">
+		<div class="nav-inner">
+			<a href="index.html" class="brand">pablo<span>.dev</span></a>
+			<button class="nav-toggle" id="navToggle" aria-label="Abrir menú">☰</button>
+			<ul class="nav-links" id="navLinks">
+				<li><a href="index.html" class="active">Inicio</a></li>
+				<li><a href="proyectos.html">Proyectos</a></li>
+				<li><a href="sobre.html">Sobre mí</a></li>
+				<li id="adminMenuitem" style="display:none;"><a href="admin.html">Panel admin</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<main>
+		<section class="hero">
+			<div class="wrap">
+				<span class="eyebrow mono">// portafolio técnico — actualizado 2026</span>
+				<h1>Construyo software <em>con intención</em>, no solo funcionalidad.</h1>
+				<p class="lead">Soy desarrollador de software. Esta es una selección de proyectos con su planteamiento técnico, las decisiones detrás de cada uno y el código que los sostiene.</p>
+				<div class="actions">
+					<a href="proyectos.html" class="btn">Ver proyectos</a>
+					<a href="sobre.html" class="btn btn-outline">Sobre mí</a>
+				</div>
+			</div>
+		</section>
+
+		<section class="section alt">
+			<div class="wrap">
+				<div class="section-head">
+					<div>
+						<span class="tag">Índice</span>
+						<h2>Últimos proyectos</h2>
+					</div>
+					<a href="proyectos.html" class="mono" style="font-size:13px; color: var(--ink-soft);">Ver todos →</a>
+				</div>
+				<div class="project-grid" id="featuredGrid">
+					<div class="empty-state">
+						<span class="mono">cargando…</span>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<div class="footer-inner">
+			<span>&copy; 2026 Pablo. Todos los derechos reservados.</span>
+			<a class="priv" id="accessLink" onclick="openLoginModal()">acceso privado</a>
+		</div>
+	</footer>
+
+	<!-- Modal de login -->
+	<div id="loginModal" class="overlay">
+		<div class="panel small">
+			<button class="panel-close" onclick="closeLoginModal()">&times;</button>
+			<div class="panel-body form-body">
+				<span class="idx mono">ACCESO</span>
+				<h3>Iniciar sesión</h3>
+				<div id="loginError" class="form-error">Email o contraseña incorrectos.</div>
+				<form onsubmit="handleLogin(event)">
+					<div class="field">
+						<label for="loginEmail">Email</label>
+						<input type="email" id="loginEmail" required>
+					</div>
+					<div class="field">
+						<label for="loginPassword">Contraseña</label>
+						<input type="password" id="loginPassword" required>
+					</div>
+					<button type="submit" class="btn" style="width:100%; justify-content:center;">Entrar</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de detalle de proyecto -->
+	<div id="projectModal" class="overlay">
+		<div class="panel">
+			<button class="panel-close" onclick="closeProjectModal()">&times;</button>
+			<div id="projectModalContent"></div>
+		</div>
+	</div>
+
+	<script type="module">
+		import { login, watchAuth, watchProjects } from './firebase-config.js';
+
+		// Menú móvil
+		document.getElementById('navToggle').addEventListener('click', () => {
+			document.getElementById('navLinks').classList.toggle('open');
+		});
+
+		// Estado de sesión (muestra/oculta "Panel admin")
+		watchAuth((user) => {
+			const adminMenu = document.getElementById('adminMenuitem');
+			if (adminMenu) adminMenu.style.display = user ? 'block' : 'none';
+		});
+
+		// Login
+		const loginModal = document.getElementById('loginModal');
+		window.openLoginModal = function () {
+			document.getElementById('loginError').classList.remove('show');
+			document.getElementById('loginEmail').value = '';
+			document.getElementById('loginPassword').value = '';
+			loginModal.classList.add('active');
+		};
+		window.closeLoginModal = function () {
+			loginModal.classList.remove('active');
+		};
+		window.handleLogin = function (event) {
+			event.preventDefault();
+			const email = document.getElementById('loginEmail').value;
+			const password = document.getElementById('loginPassword').value;
+			const errorDiv = document.getElementById('loginError');
+			login(email, password)
+				.then(() => { closeLoginModal(); })
+				.catch(() => {
+					errorDiv.classList.add('show');
+					document.getElementById('loginPassword').value = '';
+				});
+		};
+		window.addEventListener('click', (e) => {
+			if (e.target === loginModal) closeLoginModal();
+		});
+
+		// Proyectos destacados (los 3 más recientes)
+		const featuredGrid = document.getElementById('featuredGrid');
+		let allProjects = [];
+
+		watchProjects((projects) => {
+			allProjects = projects;
+			renderFeatured(projects.slice(0, 3));
+		});
+
+		function escapeHtml(str) {
+			const div = document.createElement('div');
+			div.textContent = str || '';
+			return div.innerHTML;
+		}
+
+		function renderFeatured(projects) {
+			if (!projects.length) {
+				featuredGrid.innerHTML = `
+					<div class="empty-state">
+						<span class="mono">sin proyectos aún</span>
+						Todavía no hay proyectos publicados. Vuelve pronto.
+					</div>`;
+				return;
+			}
+			featuredGrid.innerHTML = projects.map((p, i) => `
+				<div class="project-card" onclick="openProjectModal('${p.id}')">
+					<div class="thumb"><img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.title)}" loading="lazy"></div>
+					<span class="idx mono">PRY / ${String(i + 1).padStart(2, '0')}</span>
+					<h3>${escapeHtml(p.title)}</h3>
+					<p class="desc">${escapeHtml(p.description)}</p>
+					<div class="tags">
+						${(p.stack || []).slice(0, 4).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}
+					</div>
+				</div>
+			`).join('');
+		}
+
+		// Modal de detalle
+		const projectModal = document.getElementById('projectModal');
+		window.openProjectModal = function (id) {
+			const p = allProjects.find(x => x.id === id);
+			if (!p) return;
+			document.getElementById('projectModalContent').innerHTML = `
+				<div class="thumb-lg"><img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.title)}"></div>
+				<div class="panel-body">
+					<span class="idx mono">PROYECTO</span>
+					<h3>${escapeHtml(p.title)}</h3>
+					<p class="desc">${escapeHtml(p.description)}</p>
+					<div class="tags">${(p.stack || []).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}</div>
+					<div class="links">
+						${p.githubUrl ? `<a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Ver código</a>` : ''}
+						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Ver demo</a>` : ''}
+					</div>
+				</div>
+			`;
+			projectModal.classList.add('active');
+		};
+		window.closeProjectModal = function () {
+			projectModal.classList.remove('active');
+		};
+		window.addEventListener('click', (e) => {
+			if (e.target === projectModal) closeProjectModal();
+		});
+	</script>
+</body>
+</html>
