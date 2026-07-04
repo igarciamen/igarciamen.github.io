@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sobre mí — Pablo</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<nav class="nav">
+		<div class="nav-inner">
+			<a href="index.html" class="brand">pablo<span>.dev</span></a>
+			<button class="nav-toggle" id="navToggle" aria-label="Abrir menú">☰</button>
+			<ul class="nav-links" id="navLinks">
+				<li><a href="index.html">Inicio</a></li>
+				<li><a href="proyectos.html">Proyectos</a></li>
+				<li><a href="sobre.html" class="active">Sobre mí</a></li>
+				<li id="adminMenuitem" style="display:none;"><a href="admin.html">Panel admin</a></li>
+			</ul>
+		</div>
+	</nav>
+
+	<main>
+		<section class="hero" style="padding-bottom: 70px;">
+			<div class="wrap">
+				<span class="eyebrow mono">// perfil</span>
+				<h1 style="font-size: clamp(2rem, 4vw, 3rem);">Sobre mí</h1>
+				<p class="lead">Desarrollador de software enfocado en construir productos claros, mantenibles y bien pensados de principio a fin.</p>
+			</div>
+		</section>
+
+		<section class="section">
+			<div class="wrap about-grid">
+				<div>
+					<span class="tag">Habilidades</span>
+					<div style="margin-top: 18px;">
+						<div class="skill-row"><span class="label">Frontend</span><span class="value">HTML · CSS · JavaScript · React</span></div>
+						<div class="skill-row"><span class="label">Backend</span><span class="value">Node.js · Python · APIs REST</span></div>
+						<div class="skill-row"><span class="label">Datos</span><span class="value">SQL · Firebase · Bases NoSQL</span></div>
+						<div class="skill-row"><span class="label">Herramientas</span><span class="value">Git · Docker · CI/CD</span></div>
+					</div>
+				</div>
+				<div>
+					<span class="tag">Trayectoria</span>
+					<div style="margin-top: 18px;">
+						<div class="timeline-entry">
+							<span class="period">2020 — presente</span>
+							<h4>Desarrollador de software</h4>
+							<p>Diseño y construcción de aplicaciones web completas, desde la arquitectura hasta la interfaz.</p>
+						</div>
+						<div class="timeline-entry">
+							<span class="period">2018 — 2020</span>
+							<h4>Desarrollador full stack</h4>
+							<p>Desarrollo de soluciones end-to-end para distintos clientes y productos internos.</p>
+						</div>
+						<div class="timeline-entry">
+							<span class="period">2016 — 2018</span>
+							<h4>Inicios en desarrollo web</h4>
+							<p>Primeros proyectos profesionales y formación continua en tecnologías modernas.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section alt">
+			<div class="wrap" style="max-width: 640px;">
+				<span class="tag">Contacto</span>
+				<h2 style="margin-bottom: 28px;">Hablemos</h2>
+				<div class="contact-line">
+					<span class="k">Email</span>
+					<a href="mailto:pablofabiantarrio@gmail.com">pablofabiantarrio@gmail.com</a>
+				</div>
+				<div class="contact-line">
+					<span class="k">GitHub</span>
+					<a href="https://github.com" target="_blank" rel="noopener">github.com/pablo</a>
+				</div>
+				<div class="contact-line">
+					<span class="k">LinkedIn</span>
+					<a href="https://linkedin.com" target="_blank" rel="noopener">linkedin.com/in/pablo</a>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<footer>
+		<div class="footer-inner">
+			<span>&copy; 2026 Pablo. Todos los derechos reservados.</span>
+			<a class="priv" id="accessLink" onclick="openLoginModal()">acceso privado</a>
+		</div>
+	</footer>
+
+	<!-- Modal de login -->
+	<div id="loginModal" class="overlay">
+		<div class="panel small">
+			<button class="panel-close" onclick="closeLoginModal()">&times;</button>
+			<div class="panel-body form-body">
+				<span class="idx mono">ACCESO</span>
+				<h3>Iniciar sesión</h3>
+				<div id="loginError" class="form-error">Email o contraseña incorrectos.</div>
+				<form onsubmit="handleLogin(event)">
+					<div class="field">
+						<label for="loginEmail">Email</label>
+						<input type="email" id="loginEmail" required>
+					</div>
+					<div class="field">
+						<label for="loginPassword">Contraseña</label>
+						<input type="password" id="loginPassword" required>
+					</div>
+					<button type="submit" class="btn" style="width:100%; justify-content:center;">Entrar</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	<script type="module">
+		import { login, watchAuth } from './firebase-config.js';
+
+		document.getElementById('navToggle').addEventListener('click', () => {
+			document.getElementById('navLinks').classList.toggle('open');
+		});
+
+		watchAuth((user) => {
+			const adminMenu = document.getElementById('adminMenuitem');
+			if (adminMenu) adminMenu.style.display = user ? 'block' : 'none';
+		});
+
+		const loginModal = document.getElementById('loginModal');
+		window.openLoginModal = function () {
+			document.getElementById('loginError').classList.remove('show');
+			document.getElementById('loginEmail').value = '';
+			document.getElementById('loginPassword').value = '';
+			loginModal.classList.add('active');
+		};
+		window.closeLoginModal = function () { loginModal.classList.remove('active'); };
+		window.handleLogin = function (event) {
+			event.preventDefault();
+			const email = document.getElementById('loginEmail').value;
+			const password = document.getElementById('loginPassword').value;
+			const errorDiv = document.getElementById('loginError');
+			login(email, password)
+				.then(() => { closeLoginModal(); })
+				.catch(() => {
+					errorDiv.classList.add('show');
+					document.getElementById('loginPassword').value = '';
+				});
+		};
+		window.addEventListener('click', (e) => { if (e.target === loginModal) closeLoginModal(); });
+	</script>
+</body>
+</html>
