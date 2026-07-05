@@ -490,7 +490,17 @@ footer {
 .proj-row img { width: 64px; height: 48px; object-fit: cover; background: var(--bg-alt); border-radius: var(--radius); }
 .proj-row .info h4 { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; margin-bottom: 4px; }
 .proj-row .info .mono { font-size: 12px; color: var(--ink-faint); }
-.proj-row .actions { display: flex; gap: 8px; }
+.proj-row .actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+.visibility-badge {
+  display: inline-block;
+  font-size: 11px;
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: var(--radius);
+}
+.visibility-badge.is-public { background: var(--accent-tint); color: var(--accent-ink); }
+.visibility-badge.is-private { background: #f5e6e4; color: #b3403a; }
 
 .proj-docs {
   display: flex;

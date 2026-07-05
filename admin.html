@@ -127,6 +127,7 @@
 			}
 			list.innerHTML = allProjects.map(p => {
 				const docs = p.docLinks || [];
+				const isPublic = p.isPublic !== false;
 				return `
 				<div class="proj-block">
 					<div class="proj-row">
@@ -134,8 +135,10 @@
 						<div class="info">
 							<h4>${escapeHtml(p.title)}</h4>
 							<span class="mono">${(p.stack || []).join(' · ')}</span>
+							<span class="visibility-badge mono ${isPublic ? 'is-public' : 'is-private'}">${isPublic ? '🌐 Público' : '🔒 Privado'}</span>
 						</div>
 						<div class="actions">
+							<button class="btn btn-outline btn-sm" onclick="toggleVisibility('${p.id}', ${isPublic})">${isPublic ? 'Hacer privado' : 'Hacer público'}</button>
 							<button class="btn btn-outline btn-sm" onclick="editProject('${p.id}')">Editar</button>
 							<button class="btn btn-danger btn-sm" onclick="removeProject('${p.id}')">Eliminar</button>
 						</div>
@@ -225,6 +228,12 @@
 				.catch(() => showStatus('No se pudo eliminar el documento.', 'err'));
 		};
 
+		window.toggleVisibility = function (projectId, currentlyPublic) {
+			updateProject(projectId, { isPublic: !currentlyPublic })
+				.then(() => showStatus(currentlyPublic ? 'Proyecto marcado como privado.' : 'Proyecto marcado como público.', 'ok'))
+				.catch(() => showStatus('No se pudo cambiar la visibilidad.', 'err'));
+		};
+
 		window.handleSubmit = function (event) {
 			event.preventDefault();
 			const data = {
@@ -238,7 +247,7 @@
 				docLinks: getDocLinksFromForm()
 			};
 
-			const action = editingId ? updateProject(editingId, data) : addProject(data);
+			const action = editingId ? updateProject(editingId, data) : addProject({ ...data, isPublic: true });
 			action
 				.then(() => {
 					showStatus(editingId ? 'Cambios guardados.' : 'Proyecto publicado.', 'ok');

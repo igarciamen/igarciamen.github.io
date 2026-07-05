@@ -136,8 +136,8 @@
 		let allProjects = [];
 
 		watchProjects((projects) => {
-			allProjects = projects;
-			renderFeatured(projects.slice(0, 3));
+			allProjects = projects.filter(p => p.isPublic !== false);
+			renderFeatured(allProjects.slice(0, 3));
 		});
 
 		function escapeHtml(str) {
