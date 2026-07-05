@@ -30,6 +30,8 @@
 				<div class="actions">
 					<a class="btn" href="CV%20Isabel%20Garcia.pdf" download>Download CV (PDF)</a>
 					<button type="button" class="btn btn-outline" onclick="openWorkModal()">Work Experience</button>
+					<button type="button" class="btn btn-outline" onclick="openEducationModal()">Education</button>
+					<button type="button" class="btn btn-outline" onclick="openLanguagesModal()">Languages &amp; Skills</button>
 				</div>
 			</div>
 		</section>
@@ -70,39 +72,6 @@ e interceptores HTTP) consumiendo las APIs REST del sistema.</p>
 							<h4>Inicios en desarrollo web</h4>
 							<p>Primeros proyectos profesionales y formación continua en tecnologías modernas.</p>
 						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<section class="section">
-			<div class="wrap about-grid">
-				<div>
-					<span class="tag">Education</span>
-					<div style="margin-top: 18px;">
-						<div class="timeline-entry">
-							<span class="period">2023 — Present</span>
-							<h4>Bachelor's Degree in Techniques for Software Application Development</h4>
-							<p>Universitat Oberta de Catalunya</p>
-						</div>
-						<div class="timeline-entry">
-							<span class="period">1998 — 1999</span>
-							<h4>Higher National Certificate in Secretarial Studies</h4>
-							<p>IES Itaca — Zaragoza</p>
-						</div>
-					</div>
-				</div>
-				<div>
-					<span class="tag">Languages &amp; Skills</span>
-					<div style="margin-top: 18px;">
-						<div class="skill-row"><span class="label">Spanish</span><span class="value">Native</span></div>
-						<div class="skill-row"><span class="label">English</span><span class="value">C2</span></div>
-						<div class="skill-row"><span class="label">French</span><span class="value">C2</span></div>
-					</div>
-					<div style="margin-top: 26px;">
-						<p style="color: var(--ink-soft); font-size: 14px; line-height: 1.8;">
-							Analytical thinking · Detail-oriented with high attention to accuracy · Good planning and organisational skills · Strong interpersonal skills and empathy in customer interactions · Collaborative team player with mentoring capabilities · Clear and precise speaking · Advanced proficiency in MS Office Suite · Experience with multiple CRM systems (SAP, Salesforce) · Active user of AI technologies
-						</p>
 					</div>
 				</div>
 			</div>
@@ -205,6 +174,48 @@ e interceptores HTTP) consumiendo las APIs REST del sistema.</p>
 		</div>
 	</div>
 
+	<!-- Modal de Education -->
+	<div id="educationModal" class="overlay">
+		<div class="panel">
+			<button class="panel-close" onclick="closeEducationModal()">&times;</button>
+			<div class="panel-body">
+				<span class="idx mono">EDUCATION</span>
+				<h3>Education</h3>
+				<div class="timeline-entry">
+					<span class="period">2023 — Present</span>
+					<h4>Bachelor's Degree in Techniques for Software Application Development</h4>
+					<p>Universitat Oberta de Catalunya</p>
+				</div>
+				<div class="timeline-entry">
+					<span class="period">1998 — 1999</span>
+					<h4>Higher National Certificate in Secretarial Studies</h4>
+					<p>IES Itaca — Zaragoza</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de Languages & Skills -->
+	<div id="languagesModal" class="overlay">
+		<div class="panel">
+			<button class="panel-close" onclick="closeLanguagesModal()">&times;</button>
+			<div class="panel-body">
+				<span class="idx mono">LANGUAGES &amp; SKILLS</span>
+				<h3>Languages &amp; Skills</h3>
+				<div style="margin-top: 18px;">
+					<div class="skill-row"><span class="label">Spanish</span><span class="value">Native</span></div>
+					<div class="skill-row"><span class="label">English</span><span class="value">C2</span></div>
+					<div class="skill-row"><span class="label">French</span><span class="value">C2</span></div>
+				</div>
+				<div style="margin-top: 26px;">
+					<p style="color: var(--ink-soft); font-size: 14px; line-height: 1.8;">
+						Analytical thinking · Detail-oriented with high attention to accuracy · Good planning and organisational skills · Strong interpersonal skills and empathy in customer interactions · Collaborative team player with mentoring capabilities · Clear and precise speaking · Advanced proficiency in MS Office Suite · Experience with multiple CRM systems (SAP, Salesforce) · Active user of AI technologies
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script type="module">
 		import { login, watchAuth } from './firebase-config.js';
 
@@ -243,6 +254,16 @@ e interceptores HTTP) consumiendo las APIs REST del sistema.</p>
 		window.openWorkModal = function () { workModal.classList.add('active'); };
 		window.closeWorkModal = function () { workModal.classList.remove('active'); };
 		window.addEventListener('click', (e) => { if (e.target === workModal) closeWorkModal(); });
+
+		const educationModal = document.getElementById('educationModal');
+		window.openEducationModal = function () { educationModal.classList.add('active'); };
+		window.closeEducationModal = function () { educationModal.classList.remove('active'); };
+		window.addEventListener('click', (e) => { if (e.target === educationModal) closeEducationModal(); });
+
+		const languagesModal = document.getElementById('languagesModal');
+		window.openLanguagesModal = function () { languagesModal.classList.add('active'); };
+		window.closeLanguagesModal = function () { languagesModal.classList.remove('active'); };
+		window.addEventListener('click', (e) => { if (e.target === languagesModal) closeLanguagesModal(); });
 	</script>
 </body>
 </html>
