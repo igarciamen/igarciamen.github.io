@@ -174,7 +174,7 @@
 			const p = allProjects.find(x => x.id === id);
 			if (!p) return;
 			document.getElementById('projectModalContent').innerHTML = `
-				<div class="thumb-lg"><img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.title)}"></div>
+				<div class="thumb-lg"><img src="${escapeHtml(p.modalImageUrl || p.imageUrl)}" alt="${escapeHtml(p.title)}"></div>
 				<div class="panel-body">
 					<span class="idx mono">PROYECTO</span>
 					<h3>${escapeHtml(p.title)}</h3>
