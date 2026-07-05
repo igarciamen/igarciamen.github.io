@@ -74,7 +74,7 @@
 	</main>
 
 	<script type="module">
-		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject } from './firebase-config.js';
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchProjectDocs, uploadProjectDoc, deleteProjectDoc } from './firebase-config.js';
 
 		// Protección real: si no hay sesión de Firebase, fuera de aquí
 		watchAuth((user) => {
@@ -105,19 +105,27 @@
 
 		let editingId = null;
 		let allProjects = [];
+		let allProjectDocs = [];
 
 		watchProjects((projects) => {
 			allProjects = projects;
-			renderList(projects);
+			renderList();
 		});
 
-		function renderList(projects) {
+		watchProjectDocs((docs) => {
+			allProjectDocs = docs;
+			renderList();
+		});
+
+		function renderList() {
 			const list = document.getElementById('projectList');
-			if (!projects.length) {
+			if (!allProjects.length) {
 				list.innerHTML = `<p class="mono" style="color: var(--ink-faint); font-size: 13px;">Todavía no agregaste ningún proyecto. Usa el formulario de arriba.</p>`;
 				return;
 			}
-			list.innerHTML = projects.map(p => `
+			list.innerHTML = allProjects.map(p => {
+				const docs = allProjectDocs.filter(d => d.projectId === p.id);
+				return `
 				<div class="proj-row">
 					<img src="${escapeHtml(p.imageUrl)}" alt="">
 					<div class="info">
@@ -129,7 +137,19 @@
 						<button class="btn btn-danger btn-sm" onclick="removeProject('${p.id}')">Eliminar</button>
 					</div>
 				</div>
-			`).join('');
+				<div class="proj-docs">
+					${docs.map(d => `
+						<span class="doc-pill mono">
+							<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">📎 ${escapeHtml(d.name)}</a>
+							<button type="button" onclick="removeProjectDoc('${d.id}')" title="Eliminar documento">&times;</button>
+						</span>
+					`).join('')}
+					<label class="btn btn-outline btn-sm doc-upload-btn">
+						+ Subir .zip
+						<input type="file" accept=".zip" multiple style="display:none" onchange="uploadDocs('${p.id}', this.files)">
+					</label>
+				</div>
+			`; }).join('');
 		}
 
 		window.editProject = function (id) {
@@ -162,6 +182,27 @@
 			deleteProject(id)
 				.then(() => showStatus('Proyecto eliminado.', 'ok'))
 				.catch(() => showStatus('No se pudo eliminar. Intenta de nuevo.', 'err'));
+		};
+
+		window.uploadDocs = function (projectId, fileList) {
+			const files = Array.from(fileList || []);
+			if (!files.length) return;
+			showStatus('Subiendo documentación…', 'ok');
+			Promise.all(files.map(file => uploadProjectDoc(projectId, file)))
+				.then(() => showStatus('Documentación subida.', 'ok'))
+				.catch((err) => {
+					console.error('Error al subir documentación:', err);
+					showStatus('No se pudo subir uno o más archivos.', 'err');
+				});
+		};
+
+		window.removeProjectDoc = function (docId) {
+			const d = allProjectDocs.find(x => x.id === docId);
+			if (!d) return;
+			if (!confirm('¿Eliminar este documento? Esta acción no se puede deshacer.')) return;
+			deleteProjectDoc(docId, d.storagePath)
+				.then(() => showStatus('Documento eliminado.', 'ok'))
+				.catch(() => showStatus('No se pudo eliminar el documento.', 'err'));
 		};
 
 		window.handleSubmit = function (event) {
