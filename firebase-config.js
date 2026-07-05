@@ -21,13 +21,6 @@ import {
   orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBNULQgIIG9QAfqQVnN33_gEYF4DibdjKw",
@@ -42,7 +35,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 /* ---------- Autenticación ---------- */
 
@@ -84,39 +76,4 @@ export function updateProject(id, data) {
 
 export function deleteProject(id) {
   return deleteDoc(doc(db, 'projects', id));
-}
-
-/* ---------- Documentación privada de cada proyecto (Storage + Firestore) ----------
-   Solo se referencian desde admin.html. La colección 'projectDocs' y los archivos
-   en Storage exigen autenticación por reglas de seguridad (ver README/consola). */
-
-// Escucha en tiempo real TODOS los documentos de todos los proyectos.
-// callback recibe un array de { id, projectId, name, url, storagePath }.
-export function watchProjectDocs(callback) {
-  const q = query(collection(db, 'projectDocs'), orderBy('createdAt', 'desc'));
-  return onSnapshot(q, (snapshot) => {
-    const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    callback(docs);
-  });
-}
-
-// Sube un archivo .zip a Storage y registra su enlace en Firestore.
-export async function uploadProjectDoc(projectId, file) {
-  const storagePath = `project-docs/${projectId}/${Date.now()}_${file.name}`;
-  const fileRef = ref(storage, storagePath);
-  await uploadBytes(fileRef, file);
-  const url = await getDownloadURL(fileRef);
-  return addDoc(collection(db, 'projectDocs'), {
-    projectId,
-    name: file.name,
-    url,
-    storagePath,
-    createdAt: serverTimestamp()
-  });
-}
-
-// Borra un documento: primero el archivo en Storage, luego su registro en Firestore.
-export async function deleteProjectDoc(docId, storagePath) {
-  await deleteObject(ref(storage, storagePath)).catch(() => {});
-  return deleteDoc(doc(db, 'projectDocs', docId));
 }

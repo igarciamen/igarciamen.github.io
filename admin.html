@@ -55,6 +55,12 @@
 						<label for="demoUrl">Enlace a demo (opcional)</label>
 						<input type="url" id="demoUrl" placeholder="https://...">
 					</div>
+					<div class="field">
+						<label>Documentación (privada, opcional)</label>
+						<div class="hint" style="margin-bottom: 10px;">Sube el .zip donde prefieras (GitHub, Drive, Dropbox...) y pega aquí el enlace. Solo se ve en este panel, nunca en las páginas públicas.</div>
+						<div id="docLinksContainer"></div>
+						<button type="button" class="btn btn-outline btn-sm" onclick="addDocRow()">+ Añadir documento</button>
+					</div>
 					<div style="display:flex; gap: 12px;">
 						<button type="submit" class="btn" id="submitBtn">Publicar proyecto</button>
 						<button type="button" class="btn btn-outline" id="cancelEditBtn" onclick="resetForm()" style="display:none;">Cancelar edición</button>
@@ -74,7 +80,7 @@
 	</main>
 
 	<script type="module">
-		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchProjectDocs, uploadProjectDoc, deleteProjectDoc } from './firebase-config.js';
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject } from './firebase-config.js';
 
 		// Protección real: si no hay sesión de Firebase, fuera de aquí
 		watchAuth((user) => {
@@ -105,17 +111,13 @@
 
 		let editingId = null;
 		let allProjects = [];
-		let allProjectDocs = [];
 
 		watchProjects((projects) => {
 			allProjects = projects;
 			renderList();
 		});
 
-		watchProjectDocs((docs) => {
-			allProjectDocs = docs;
-			renderList();
-		});
+		setDocLinksInForm([]);
 
 		function renderList() {
 			const list = document.getElementById('projectList');
@@ -124,32 +126,59 @@
 				return;
 			}
 			list.innerHTML = allProjects.map(p => {
-				const docs = allProjectDocs.filter(d => d.projectId === p.id);
+				const docs = p.docLinks || [];
 				return `
-				<div class="proj-row">
-					<img src="${escapeHtml(p.imageUrl)}" alt="">
-					<div class="info">
-						<h4>${escapeHtml(p.title)}</h4>
-						<span class="mono">${(p.stack || []).join(' · ')}</span>
+				<div class="proj-block">
+					<div class="proj-row">
+						<img src="${escapeHtml(p.imageUrl)}" alt="">
+						<div class="info">
+							<h4>${escapeHtml(p.title)}</h4>
+							<span class="mono">${(p.stack || []).join(' · ')}</span>
+						</div>
+						<div class="actions">
+							<button class="btn btn-outline btn-sm" onclick="editProject('${p.id}')">Editar</button>
+							<button class="btn btn-danger btn-sm" onclick="removeProject('${p.id}')">Eliminar</button>
+						</div>
 					</div>
-					<div class="actions">
-						<button class="btn btn-outline btn-sm" onclick="editProject('${p.id}')">Editar</button>
-						<button class="btn btn-danger btn-sm" onclick="removeProject('${p.id}')">Eliminar</button>
-					</div>
-				</div>
-				<div class="proj-docs">
-					${docs.map(d => `
-						<span class="doc-pill mono">
-							<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">📎 ${escapeHtml(d.name)}</a>
-							<button type="button" onclick="removeProjectDoc('${d.id}')" title="Eliminar documento">&times;</button>
-						</span>
-					`).join('')}
-					<label class="btn btn-outline btn-sm doc-upload-btn">
-						+ Subir .zip
-						<input type="file" accept=".zip" multiple style="display:none" onchange="uploadDocs('${p.id}', this.files)">
-					</label>
+					${docs.length ? `
+					<div class="proj-docs">
+						${docs.map((d, i) => `
+							<span class="doc-pill mono">
+								<a href="${escapeHtml(d.url)}" target="_blank" rel="noopener">📎 ${escapeHtml(d.name)}</a>
+								<button type="button" onclick="removeDocLink('${p.id}', ${i})" title="Eliminar documento">&times;</button>
+							</span>
+						`).join('')}
+					</div>` : ''}
 				</div>
 			`; }).join('');
+		}
+
+		function addDocRow(name = '', url = '') {
+			const row = document.createElement('div');
+			row.className = 'doc-row';
+			row.style.cssText = 'display:flex; gap:8px; margin-bottom:8px;';
+			row.innerHTML = `
+				<input type="text" placeholder="Nombre (p. ej. Documentación técnica)" class="doc-name" value="${escapeHtml(name)}" style="flex:1;">
+				<input type="url" placeholder="https://..." class="doc-url" value="${escapeHtml(url)}" style="flex:1;">
+				<button type="button" class="btn btn-outline btn-sm" title="Quitar">&times;</button>
+			`;
+			row.querySelector('button').onclick = () => row.remove();
+			document.getElementById('docLinksContainer').appendChild(row);
+		}
+		window.addDocRow = addDocRow;
+
+		function getDocLinksFromForm() {
+			return Array.from(document.querySelectorAll('#docLinksContainer .doc-row'))
+				.map(row => ({
+					name: row.querySelector('.doc-name').value.trim(),
+					url: row.querySelector('.doc-url').value.trim()
+				}))
+				.filter(d => d.name && d.url);
+		}
+
+		function setDocLinksInForm(links) {
+			document.getElementById('docLinksContainer').innerHTML = '';
+			(links && links.length ? links : [{ name: '', url: '' }]).forEach(d => addDocRow(d.name, d.url));
 		}
 
 		window.editProject = function (id) {
@@ -163,6 +192,7 @@
 			document.getElementById('stack').value = (p.stack || []).join(', ');
 			document.getElementById('githubUrl').value = p.githubUrl || '';
 			document.getElementById('demoUrl').value = p.demoUrl || '';
+			setDocLinksInForm(p.docLinks);
 			document.getElementById('formTitle').textContent = 'Editar proyecto';
 			document.getElementById('submitBtn').textContent = 'Guardar cambios';
 			document.getElementById('cancelEditBtn').style.display = 'inline-flex';
@@ -172,6 +202,7 @@
 		window.resetForm = function () {
 			editingId = null;
 			document.getElementById('projectForm').reset();
+			setDocLinksInForm([]);
 			document.getElementById('formTitle').textContent = 'Agregar proyecto';
 			document.getElementById('submitBtn').textContent = 'Publicar proyecto';
 			document.getElementById('cancelEditBtn').style.display = 'none';
@@ -184,23 +215,12 @@
 				.catch(() => showStatus('No se pudo eliminar. Intenta de nuevo.', 'err'));
 		};
 
-		window.uploadDocs = function (projectId, fileList) {
-			const files = Array.from(fileList || []);
-			if (!files.length) return;
-			showStatus('Subiendo documentación…', 'ok');
-			Promise.all(files.map(file => uploadProjectDoc(projectId, file)))
-				.then(() => showStatus('Documentación subida.', 'ok'))
-				.catch((err) => {
-					console.error('Error al subir documentación:', err);
-					showStatus('No se pudo subir uno o más archivos.', 'err');
-				});
-		};
-
-		window.removeProjectDoc = function (docId) {
-			const d = allProjectDocs.find(x => x.id === docId);
-			if (!d) return;
+		window.removeDocLink = function (projectId, index) {
+			const p = allProjects.find(x => x.id === projectId);
+			if (!p) return;
 			if (!confirm('¿Eliminar este documento? Esta acción no se puede deshacer.')) return;
-			deleteProjectDoc(docId, d.storagePath)
+			const docLinks = (p.docLinks || []).filter((_, i) => i !== index);
+			updateProject(projectId, { docLinks })
 				.then(() => showStatus('Documento eliminado.', 'ok'))
 				.catch(() => showStatus('No se pudo eliminar el documento.', 'err'));
 		};
@@ -214,7 +234,8 @@
 				description: document.getElementById('description').value.trim(),
 				stack: document.getElementById('stack').value.split(',').map(s => s.trim()).filter(Boolean),
 				githubUrl: document.getElementById('githubUrl').value.trim(),
-				demoUrl: document.getElementById('demoUrl').value.trim()
+				demoUrl: document.getElementById('demoUrl').value.trim(),
+				docLinks: getDocLinksFromForm()
 			};
 
 			const action = editingId ? updateProject(editingId, data) : addProject(data);
