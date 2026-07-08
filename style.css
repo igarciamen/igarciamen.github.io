@@ -333,7 +333,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   }
   .skill-icons { display: flex; flex-wrap: wrap; gap: 14px; }
   .skill-icon-item { min-height: 24px; gap: 5px; }
-  .skill-icon-item span { font-size: 11px; white-space: normal; max-width: 60px; }
+  .skill-icon-item span { font-size: 11px; white-space: nowrap; }
   .skill-logo { width: 24px; height: 24px; }
   .skill-logo-lg { width: 30px; height: 30px; }
 }
