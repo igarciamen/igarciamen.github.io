@@ -282,11 +282,41 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--ink);
 }
 .hero ul li:last-child { border-bottom: 1px solid var(--line); }
-.skill-icon {
-  height: 1em;
-  width: auto;
-  vertical-align: middle;
-  display: inline-block;
+.skill-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.skill-icons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.skill-icon-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  min-height: 32px;
+}
+.skill-icon-item span {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.skill-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.skill-text-badge {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  color: var(--ink) !important;
 }
 .hero .actions {
   margin-top: 40px;
