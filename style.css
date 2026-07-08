@@ -284,10 +284,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero ul li:last-child { border-bottom: 1px solid var(--line); }
 .skills-list {
   display: grid;
-  grid-template-columns: 180px repeat(5, 64px);
+  grid-template-columns: 130px repeat(5, 64px);
   align-items: end;
-  row-gap: 36px;
+  row-gap: 26px;
   column-gap: 16px;
+  margin-left: 50px;
 }
 .skill-item { display: contents; }
 .skill-item strong { grid-column: 1; padding-bottom: 6px; }
