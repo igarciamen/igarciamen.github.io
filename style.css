@@ -72,7 +72,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   border-bottom: 1px solid var(--line);
   position: sticky;
   top: 0;
-  background: var(--ink-soft);
+  background: #140b19;
   backdrop-filter: blur(6px);
   z-index: 40;
 }
@@ -140,7 +140,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   .nav-links {
     position: absolute;
     top: 100%; left: 0; right: 0;
-    background: var(--ink-soft);
+    background: #140b19;
     border-bottom: 1px solid var(--line);
     flex-direction: column;
     align-items: flex-start;
