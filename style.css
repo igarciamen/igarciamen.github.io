@@ -288,7 +288,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   align-items: end;
   row-gap: 26px;
   column-gap: 16px;
-  margin-left: clamp(16px, 6vw, 50px);
+  margin-left: clamp(16px, 6vw, 30px);
 }
 .skill-item { display: contents; }
 .skill-item strong { grid-column: 1; padding-bottom: 6px; }
