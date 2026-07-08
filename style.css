@@ -204,6 +204,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   line-height: 1.5;
   color: var(--ink);
 }
+.hero p.lead a {
+  color: var(--accent);
+  text-decoration: underline;
+}
 .hero h2 {
   margin-top: 44px;
   margin-bottom: 12px;
