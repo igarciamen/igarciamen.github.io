@@ -282,17 +282,20 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--ink);
 }
 .hero ul li:last-child { border-bottom: 1px solid var(--line); }
-.skill-item {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+.skills-list {
+  display: grid;
+  grid-template-columns: 180px repeat(5, 64px);
+  align-items: end;
+  row-gap: 24px;
+  column-gap: 16px;
 }
-.skill-icons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
+.skill-item { display: contents; }
+.skill-item strong { grid-column: 1; padding-bottom: 6px; }
+.skill-item:nth-child(1) strong, .skill-item:nth-child(1) .skill-icon-item { grid-row: 1; }
+.skill-item:nth-child(2) strong, .skill-item:nth-child(2) .skill-icon-item { grid-row: 2; }
+.skill-item:nth-child(3) strong, .skill-item:nth-child(3) .skill-icon-item { grid-row: 3; }
+.skill-item:nth-child(4) strong, .skill-item:nth-child(4) .skill-icon-item { grid-row: 4; }
+.skill-icons { display: contents; }
 .skill-icon-item {
   display: flex;
   flex-direction: column;
@@ -319,12 +322,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 640px) {
+  .skills-list { display: block; }
   .skill-item {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  .skill-icons { gap: 14px; }
+  .skill-icons { display: flex; flex-wrap: wrap; gap: 14px; }
   .skill-icon-item { min-height: 24px; gap: 5px; }
   .skill-icon-item span { font-size: 11px; white-space: normal; max-width: 60px; }
   .skill-logo { width: 24px; height: 24px; }
