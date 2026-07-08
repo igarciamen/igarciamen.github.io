@@ -163,11 +163,7 @@
 
 		function renderFeatured(projects) {
 			if (!projects.length) {
-				featuredGrid.innerHTML = `
-					<div class="empty-state">
-						<span class="mono">sin proyectos aún</span>
-						Todavía no hay proyectos publicados. Vuelve pronto.
-					</div>`;
+				featuredGrid.innerHTML = `<div class="empty-state"></div>`;
 				return;
 			}
 			featuredGrid.innerHTML = projects.map((p, i) => `

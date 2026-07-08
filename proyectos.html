@@ -127,11 +127,7 @@
 
 		function renderGrid(projects) {
 			if (!projects.length) {
-				projectGrid.innerHTML = `
-					<div class="empty-state">
-						<span class="mono">sin proyectos aún</span>
-						Todavía no hay proyectos publicados. Vuelve pronto.
-					</div>`;
+				projectGrid.innerHTML = `<div class="empty-state"></div>`;
 				return;
 			}
 			projectGrid.innerHTML = projects.map((p, i) => `
