@@ -272,6 +272,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--ink);
 }
 .hero ul li:last-child { border-bottom: 1px solid var(--line); }
+.skill-icon {
+  height: 1em;
+  width: auto;
+  vertical-align: middle;
+  display: inline-block;
+}
 .hero .actions {
   margin-top: 40px;
   display: flex;
