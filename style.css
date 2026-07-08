@@ -88,7 +88,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .brand {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 500;
   color: var(--ink);
   letter-spacing: -0.02em;
@@ -103,7 +103,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 .nav-links a {
-  font-size: 14px;
+  font-size: 17px;
   color: var(--ink-soft);
   position: relative;
   padding-bottom: 3px;
