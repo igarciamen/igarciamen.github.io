@@ -313,10 +313,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   height: 32px;
   object-fit: contain;
 }
-.skill-text-badge {
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  color: var(--ink) !important;
+.skill-logo-lg {
+  width: 42px;
+  height: 42px;
 }
 .hero .actions {
   margin-top: 40px;
