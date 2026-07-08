@@ -210,6 +210,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .hero h2 {
   font-family: 'Inter', sans-serif;
+  font-size: 1.3rem;
+  color: #b3a37e;
   margin-top: 44px;
   margin-bottom: 12px;
 }
@@ -254,7 +256,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   display: block;
   margin-bottom: 10px;
 }
-.section-head h2 { font-size: clamp(1.8rem, 3vw, 2.4rem); font-family: 'Inter', sans-serif; }
+.section-head h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-family: 'Inter', sans-serif; color: #b3a37e; }
 
 /* ---------- Grid de proyectos ---------- */
 .project-grid {
