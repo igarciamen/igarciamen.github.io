@@ -217,8 +217,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   margin-top: 8px;
 }
 .hero ul li {
-  position: relative;
-  padding: 10px 0 10px 28px;
+  padding: 10px 0;
   border-top: 1px solid var(--line);
   font-size: 21px;
   font-weight: 500;
@@ -226,17 +225,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   color: var(--ink);
 }
 .hero ul li:last-child { border-bottom: 1px solid var(--line); }
-.hero ul li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--accent);
-}
 .hero .actions {
   margin-top: 40px;
   display: flex;
