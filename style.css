@@ -177,6 +177,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
 
+.hero .actions .btn {
+  background: #3e362a;
+  border-color: #3e362a;
+  color: #fff;
+}
+.hero .actions .btn:hover {
+  background: #f5f5f3;
+  border-color: #f5f5f3;
+  color: #3e362a;
+}
+
 .btn-sm { padding: 8px 14px; font-size: 12px; }
 
 .btn-danger { border-color: #b3403a; color: #b3403a; background: transparent; }
