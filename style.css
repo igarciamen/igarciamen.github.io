@@ -177,7 +177,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 /* ---------- Hero ---------- */
 .hero {
-  padding: 120px 0 90px;
+  padding: 60px 0 90px;
   border-bottom: 1px solid var(--line);
 }
 .hero .eyebrow {
@@ -203,6 +203,13 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   font-weight: 500;
   line-height: 1.5;
   color: var(--ink);
+}
+.hero h2 {
+  margin-top: 44px;
+  margin-bottom: 12px;
+}
+.hero ul {
+  margin-left: 24px;
 }
 .hero .actions {
   margin-top: 40px;
