@@ -286,7 +286,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   display: grid;
   grid-template-columns: 180px repeat(5, 64px);
   align-items: end;
-  row-gap: 24px;
+  row-gap: 36px;
   column-gap: 16px;
 }
 .skill-item { display: contents; }
