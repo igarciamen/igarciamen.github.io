@@ -479,6 +479,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .skill-row .label { color: var(--ink); font-weight: 500; }
 .skill-row .value { color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: right; }
+.assessment-link { color: var(--accent); text-decoration: underline; }
 
 .timeline-entry { padding: 22px 0; border-bottom: 1px solid var(--line); }
 .timeline-entry:last-child { border-bottom: none; }
