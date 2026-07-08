@@ -181,6 +181,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   background: #140b19;
   border-color: #140b19;
   color: #fff;
+  flex: 1 1 0;
+  justify-content: center;
 }
 .hero .actions .btn:hover {
   background: #f5f5f3;

@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>About me</title>
-	<link rel="stylesheet" href="style.css?v=16">
+	<link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 
@@ -30,8 +30,9 @@
 					<button type="button" class="btn btn-outline" onclick="openEducationModal()">Education</button>
 					<button type="button" class="btn btn-outline" onclick="openWorkModal()">Work Experience</button>
 					<div class="actions-break"></div>
-					<button type="button" class="btn btn-outline" onclick="openLanguagesModal()">Languages &amp; Skills</button>
-					<a class="btn" href="CV%20Isabel%20Garcia.pdf" download>Download CV (PDF)</a>
+					<button type="button" class="btn btn-outline" onclick="openLanguagesModal()">Languages</button>
+					<button type="button" class="btn btn-outline" onclick="openSkillsModal()">Skills</button>
+					<a class="btn" href="CVIsabelGarc%C3%ADa.pdf" download>Download CV (PDF)</a>
 				</div>
 			</div>
 		</section>
@@ -154,23 +155,32 @@
 		</div>
 	</div>
 
-	<!-- Modal de Languages & Skills -->
+	<!-- Modal de Languages -->
 	<div id="languagesModal" class="overlay">
 		<div class="panel">
 			<button class="panel-close" onclick="closeLanguagesModal()">&times;</button>
 			<div class="panel-body">
-				
-				<h3>Languages &amp; Skills</h3>
+
+				<h3>Languages</h3>
 				<div style="margin-top: 18px;">
 					<div class="skill-row"><span class="label">Spanish</span><span class="value">Native</span></div>
 					<div class="skill-row"><span class="label">English</span><span class="value">C2</span></div>
 					<div class="skill-row"><span class="label">French</span><span class="value">C2</span></div>
 				</div>
-				<div style="margin-top: 26px;">
-					<p style="color: var(--ink-soft); font-size: 14px; line-height: 1.8;">
-						Analytical thinking · Detail-oriented with high attention to accuracy · Good planning and organisational skills · Strong interpersonal skills and empathy in customer interactions · Collaborative team player with mentoring capabilities · Clear and precise speaking · Advanced proficiency in MS Office Suite · Experience with multiple CRM systems (SAP, Salesforce) · Active user of AI technologies
-					</p>
-				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de Skills -->
+	<div id="skillsModal" class="overlay">
+		<div class="panel">
+			<button class="panel-close" onclick="closeSkillsModal()">&times;</button>
+			<div class="panel-body">
+
+				<h3>Skills</h3>
+				<p style="color: var(--ink-soft); font-size: 14px; line-height: 1.8; margin-top: 18px;">
+					Analytical thinking · Detail-oriented with high attention to accuracy · Good planning and organisational skills · Strong interpersonal skills and empathy in customer interactions · Collaborative team player with mentoring capabilities · Clear and precise speaking · Advanced proficiency in MS Office Suite · Experience with multiple CRM systems (SAP, Salesforce) · Active user of AI technologies
+				</p>
 			</div>
 		</div>
 	</div>
@@ -223,6 +233,11 @@
 		window.openLanguagesModal = function () { languagesModal.classList.add('active'); };
 		window.closeLanguagesModal = function () { languagesModal.classList.remove('active'); };
 		window.addEventListener('click', (e) => { if (e.target === languagesModal) closeLanguagesModal(); });
+
+		const skillsModal = document.getElementById('skillsModal');
+		window.openSkillsModal = function () { skillsModal.classList.add('active'); };
+		window.closeSkillsModal = function () { skillsModal.classList.remove('active'); };
+		window.addEventListener('click', (e) => { if (e.target === skillsModal) closeSkillsModal(); });
 	</script>
 </body>
 </html>
