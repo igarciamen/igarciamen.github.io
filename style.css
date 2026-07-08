@@ -323,6 +323,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 @media (max-width: 640px) {
+  .hero ul li { padding: 10px 0 10px 0px; }
   .skills-list { display: block; }
   .skill-item {
     display: flex;
