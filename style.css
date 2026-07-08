@@ -198,9 +198,32 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .hero p.lead {
   margin-top: 28px;
-  max-width: 560px;
+  max-width: 700px;
   font-size: 18px;
   color: var(--ink-soft);
+}
+.hero-highlights {
+  margin-top: 20px;
+  max-width: 700px;
+  list-style: none;
+}
+.hero-highlights li {
+  position: relative;
+  padding: 12px 0 12px 26px;
+  border-top: 1px solid var(--line);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.hero-highlights li:last-child { border-bottom: 1px solid var(--line); }
+.hero-highlights li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 21px;
+  width: 8px;
+  height: 1px;
+  background: var(--accent);
 }
 .hero .actions {
   margin-top: 40px;
