@@ -77,3 +77,31 @@ export function updateProject(id, data) {
 export function deleteProject(id) {
   return deleteDoc(doc(db, 'projects', id));
 }
+
+/* ---------- CV: Education / Work Experience / Skills (Firestore) ----------
+   Mismo patrón CRUD que los proyectos, parametrizado por nombre de colección
+   para no repetir el mismo bloque tres veces. Cada documento lleva un campo
+   numérico 'order' que controla el orden de aparición en cv.html. */
+
+// Escucha en tiempo real una colección de CV, ordenada por 'order' ascendente.
+export function watchCvItems(collectionName, callback) {
+  const q = query(collection(db, collectionName), orderBy('order', 'asc'));
+  return onSnapshot(q, (snapshot) => {
+    callback(snapshot.docs.map(d => ({ id: d.id, ...d.data() })));
+  });
+}
+
+export function addCvItem(collectionName, data) {
+  return addDoc(collection(db, collectionName), {
+    ...data,
+    createdAt: serverTimestamp()
+  });
+}
+
+export function updateCvItem(collectionName, id, data) {
+  return updateDoc(doc(db, collectionName, id), data);
+}
+
+export function deleteCvItem(collectionName, id) {
+  return deleteDoc(doc(db, collectionName, id));
+}

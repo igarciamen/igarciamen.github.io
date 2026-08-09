@@ -69,7 +69,7 @@
 			</div>
 		</section>
 
-		<section class="admin-section" style="border-bottom: none;">
+		<section class="admin-section">
 			<div class="wrap">
 				<h2>Proyectos publicados</h2>
 				<div id="projectList">
@@ -77,10 +77,129 @@
 				</div>
 			</div>
 		</section>
+
+		<!-- ---------- CV: importar datos existentes (una sola vez) ---------- -->
+		<section class="admin-section">
+			<div class="wrap">
+				<h2>Importar datos actuales del CV</h2>
+				<p class="hint" style="margin-bottom: 14px;">Rellena de una vez Education, Work Experience y Skills con el contenido que ya tenías fijo en cv.html. Solo hace falta ejecutarlo una vez; si una sección ya tiene elementos, se salta para no duplicar.</p>
+				<button type="button" class="btn btn-outline" onclick="seedCvData()">Importar datos existentes</button>
+			</div>
+		</section>
+
+		<!-- ---------- CV: Education ---------- -->
+		<section class="admin-section">
+			<div class="wrap" style="max-width: 640px;">
+				<h2 id="educationFormTitle">Agregar estudio</h2>
+				<div id="educationStatusMsg" class="status-msg"></div>
+				<form id="educationForm" onsubmit="submitCvForm('education', event)">
+					<div class="field">
+						<label for="education-order">Orden (número, menor aparece primero)</label>
+						<input type="number" id="education-order" value="0" required>
+					</div>
+					<div class="field">
+						<label for="education-period">Periodo</label>
+						<input type="text" id="education-period" placeholder="2023 — Present" required>
+					</div>
+					<div class="field">
+						<label for="education-title">Título</label>
+						<input type="text" id="education-title" required>
+					</div>
+					<div class="field">
+						<label for="education-institution">Institución</label>
+						<input type="text" id="education-institution" required>
+					</div>
+					<div style="display:flex; gap: 12px;">
+						<button type="submit" class="btn" id="educationSubmitBtn">Agregar estudio</button>
+						<button type="button" class="btn btn-outline" id="educationCancelBtn" onclick="resetCvForm('education')" style="display:none;">Cancelar edición</button>
+					</div>
+				</form>
+			</div>
+		</section>
+		<section class="admin-section">
+			<div class="wrap">
+				<h2>Education (CV)</h2>
+				<div id="educationList">
+					<p class="mono" style="color: var(--ink-faint); font-size: 13px;">cargando…</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- ---------- CV: Work Experience ---------- -->
+		<section class="admin-section">
+			<div class="wrap" style="max-width: 640px;">
+				<h2 id="workExperienceFormTitle">Agregar experiencia laboral</h2>
+				<div id="workExperienceStatusMsg" class="status-msg"></div>
+				<form id="workExperienceForm" onsubmit="submitCvForm('workExperience', event)">
+					<div class="field">
+						<label for="workExperience-order">Orden (número, menor aparece primero)</label>
+						<input type="number" id="workExperience-order" value="0" required>
+					</div>
+					<div class="field">
+						<label for="workExperience-period">Periodo</label>
+						<input type="text" id="workExperience-period" placeholder="Sept 2024 — March 2026" required>
+					</div>
+					<div class="field">
+						<label for="workExperience-title">Puesto</label>
+						<input type="text" id="workExperience-title" required>
+					</div>
+					<div class="field">
+						<label for="workExperience-company">Empresa / ubicación</label>
+						<input type="text" id="workExperience-company" placeholder="EMPRESA — Ciudad" required>
+					</div>
+					<div class="field">
+						<label for="workExperience-description">Descripción</label>
+						<textarea id="workExperience-description" rows="4" required></textarea>
+					</div>
+					<div style="display:flex; gap: 12px;">
+						<button type="submit" class="btn" id="workExperienceSubmitBtn">Agregar experiencia laboral</button>
+						<button type="button" class="btn btn-outline" id="workExperienceCancelBtn" onclick="resetCvForm('workExperience')" style="display:none;">Cancelar edición</button>
+					</div>
+				</form>
+			</div>
+		</section>
+		<section class="admin-section">
+			<div class="wrap">
+				<h2>Work Experience (CV)</h2>
+				<div id="workExperienceList">
+					<p class="mono" style="color: var(--ink-faint); font-size: 13px;">cargando…</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- ---------- CV: Skills ---------- -->
+		<section class="admin-section">
+			<div class="wrap" style="max-width: 640px;">
+				<h2 id="skillsFormTitle">Agregar habilidad</h2>
+				<div id="skillsStatusMsg" class="status-msg"></div>
+				<form id="skillsForm" onsubmit="submitCvForm('skills', event)">
+					<div class="field">
+						<label for="skills-order">Orden (número, menor aparece primero)</label>
+						<input type="number" id="skills-order" value="0" required>
+					</div>
+					<div class="field">
+						<label for="skills-text">Habilidad</label>
+						<input type="text" id="skills-text" placeholder="Analytical thinking" required>
+					</div>
+					<div style="display:flex; gap: 12px;">
+						<button type="submit" class="btn" id="skillsSubmitBtn">Agregar habilidad</button>
+						<button type="button" class="btn btn-outline" id="skillsCancelBtn" onclick="resetCvForm('skills')" style="display:none;">Cancelar edición</button>
+					</div>
+				</form>
+			</div>
+		</section>
+		<section class="admin-section" style="border-bottom: none;">
+			<div class="wrap">
+				<h2>Skills (CV)</h2>
+				<div id="skillsList">
+					<p class="mono" style="color: var(--ink-faint); font-size: 13px;">cargando…</p>
+				</div>
+			</div>
+		</section>
 	</main>
 
 	<script type="module">
-		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject } from './firebase-config.js';
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchCvItems, addCvItem, updateCvItem, deleteCvItem } from './firebase-config.js';
 
 		// Protección real: si no hay sesión de Firebase, fuera de aquí
 		watchAuth((user) => {
@@ -256,6 +375,158 @@
 				.catch((err) => {
 					console.error('Error al guardar en Firestore:', err);
 					showStatus('Algo falló al guardar. Intenta de nuevo.', 'err');
+				});
+		};
+
+		/* ---------- CV: Education / Work Experience / Skills ----------
+		   Un único bloque genérico reutilizado por las 3 secciones, en vez
+		   de triplicar el mismo CRUD. 'kind' es 'education' | 'workExperience' | 'skills'. */
+		const cvSections = {
+			education: {
+				addLabel: 'Agregar estudio',
+				fields: ['period', 'title', 'institution'],
+				summary: (item) => `<h4>${escapeHtml(item.title)}</h4><span class="mono">${escapeHtml(item.period)} · ${escapeHtml(item.institution)}</span>`
+			},
+			workExperience: {
+				addLabel: 'Agregar experiencia laboral',
+				fields: ['period', 'title', 'company', 'description'],
+				summary: (item) => `<h4>${escapeHtml(item.title)}</h4><span class="mono">${escapeHtml(item.period)} · ${escapeHtml(item.company)}</span>`
+			},
+			skills: {
+				addLabel: 'Agregar habilidad',
+				fields: ['text'],
+				summary: (item) => `<h4>${escapeHtml(item.text)}</h4>`
+			}
+		};
+
+		Object.keys(cvSections).forEach((kind) => {
+			const cfg = cvSections[kind];
+			cfg.items = [];
+			cfg.editingId = null;
+			watchCvItems(kind, (data) => {
+				cfg.items = data;
+				renderCvList(kind);
+			});
+		});
+
+		function renderCvList(kind) {
+			const cfg = cvSections[kind];
+			const list = document.getElementById(kind + 'List');
+			if (!cfg.items.length) {
+				list.innerHTML = `<p class="mono" style="color: var(--ink-faint); font-size: 13px;">Todavía no hay elementos. Usa el formulario de arriba.</p>`;
+				return;
+			}
+			list.innerHTML = cfg.items.map((item) => `
+				<div class="proj-block">
+					<div class="proj-row" style="grid-template-columns: 1fr auto;">
+						<div class="info">${cfg.summary(item)}</div>
+						<div class="actions">
+							<button class="btn btn-outline btn-sm" onclick="editCvItem('${kind}','${item.id}')">Editar</button>
+							<button class="btn btn-danger btn-sm" onclick="removeCvItem('${kind}','${item.id}')">Eliminar</button>
+						</div>
+					</div>
+				</div>
+			`).join('');
+		}
+
+		function showCvStatus(kind, message, type) {
+			const el = document.getElementById(kind + 'StatusMsg');
+			el.textContent = message;
+			el.className = 'status-msg show ' + type;
+			setTimeout(() => { el.classList.remove('show'); }, 4000);
+		}
+
+		window.editCvItem = function (kind, id) {
+			const cfg = cvSections[kind];
+			const item = cfg.items.find((x) => x.id === id);
+			if (!item) return;
+			cfg.editingId = id;
+			document.getElementById(kind + '-order').value = item.order ?? 0;
+			cfg.fields.forEach((f) => { document.getElementById(kind + '-' + f).value = item[f] || ''; });
+			document.getElementById(kind + 'FormTitle').textContent = 'Editar';
+			document.getElementById(kind + 'SubmitBtn').textContent = 'Guardar cambios';
+			document.getElementById(kind + 'CancelBtn').style.display = 'inline-flex';
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		};
+
+		window.resetCvForm = function (kind) {
+			const cfg = cvSections[kind];
+			cfg.editingId = null;
+			document.getElementById(kind + 'Form').reset();
+			document.getElementById(kind + 'FormTitle').textContent = cfg.addLabel;
+			document.getElementById(kind + 'SubmitBtn').textContent = cfg.addLabel;
+			document.getElementById(kind + 'CancelBtn').style.display = 'none';
+		};
+
+		window.removeCvItem = function (kind, id) {
+			if (!confirm('¿Eliminar este elemento? Esta acción no se puede deshacer.')) return;
+			deleteCvItem(kind, id)
+				.then(() => showCvStatus(kind, 'Elemento eliminado.', 'ok'))
+				.catch(() => showCvStatus(kind, 'No se pudo eliminar. Intenta de nuevo.', 'err'));
+		};
+
+		window.submitCvForm = function (kind, event) {
+			event.preventDefault();
+			const cfg = cvSections[kind];
+			const data = { order: Number(document.getElementById(kind + '-order').value) || 0 };
+			cfg.fields.forEach((f) => { data[f] = document.getElementById(kind + '-' + f).value.trim(); });
+
+			const action = cfg.editingId ? updateCvItem(kind, cfg.editingId, data) : addCvItem(kind, data);
+			action
+				.then(() => {
+					showCvStatus(kind, cfg.editingId ? 'Cambios guardados.' : 'Añadido.', 'ok');
+					window.resetCvForm(kind);
+				})
+				.catch((err) => {
+					console.error('Error al guardar en Firestore:', err);
+					showCvStatus(kind, 'Algo falló al guardar. Intenta de nuevo.', 'err');
+				});
+		};
+
+		// Importación única del contenido que antes estaba fijo en cv.html.
+		// Si una colección ya tiene elementos, se salta para no duplicar.
+		window.seedCvData = function () {
+			if (!confirm('Esto añadirá a Firestore los datos que ya tenías fijos en cv.html (las secciones que sigan vacías). ¿Continuar?')) return;
+
+			const seedData = {
+				education: [
+					{ order: 1, period: '2023 — Present', title: "Bachelor's Degree in Techniques for Software Application Development", institution: 'Universitat Oberta de Catalunya' },
+					{ order: 2, period: '1998 — 1999', title: 'Higher National Certificate in Secretarial Studies', institution: 'IES Itaca — Zaragoza' }
+				],
+				workExperience: [
+					{ order: 1, period: 'Sept 2024 — March 2026', title: 'Customer service agent', company: 'BSH GROUP — Remote position alongside my IT studies', description: 'English and French customer service for Canada, handling calls and chat enquiries, email management, incident resolution.' },
+					{ order: 2, period: 'Jul 2019 — Jan 2022', title: 'Administrative assistant', company: 'EUROPEAN COMMISSION - ECFIN — Luxembourg', description: 'Administrative support to advisers. Coordination arrangements with other departments. Maintaining electronic filing systems and databases.' },
+					{ order: 3, period: 'Nov 2005 — Jun 2019', title: 'Administrative assistant', company: 'CUATRECASAS LAW FIRM — Zaragoza', description: 'Administrative support to managers and staff, setting up work procedures in the department. IT agent in the firm (aimed at improving the use of technology in the firm and training staff about corporate software and procedures.).' },
+					{ order: 4, period: 'Jan 2003 — Sept 2005', title: 'Administrative Assistant', company: 'FMC, S.A. — Valencia', description: 'Management of import procedures from USA. Management of export procedures within EU.' },
+					{ order: 5, period: 'Feb 2001 — Sept 2002', title: 'Administrative Assistant', company: 'ZANINI — Zaragoza', description: 'Handling phone calls, managing orders, coordinating meetings.' },
+					{ order: 6, period: 'Mar 2000 — Jan 2001', title: 'Receptionist', company: 'DISNEYLAND HOTEL — Paris', description: 'General customer service in English, French, and Spanish.' }
+				],
+				skills: [
+					{ order: 1, text: 'Analytical thinking' },
+					{ order: 2, text: 'Detail-oriented with high attention to accuracy' },
+					{ order: 3, text: 'Good planning and organisational skills' },
+					{ order: 4, text: 'Strong interpersonal skills and empathy in customer interactions' },
+					{ order: 5, text: 'Collaborative team player with mentoring capabilities' },
+					{ order: 6, text: 'Clear and precise speaking' },
+					{ order: 7, text: 'Advanced proficiency in MS Office Suite' },
+					{ order: 8, text: 'Experience with multiple CRM systems (SAP, Salesforce)' }
+				]
+			};
+
+			const jobs = Object.keys(seedData)
+				.filter((kind) => cvSections[kind].items.length === 0)
+				.flatMap((kind) => seedData[kind].map((entry) => addCvItem(kind, entry)));
+
+			if (!jobs.length) {
+				alert('Todas las secciones ya tienen datos, no se importó nada.');
+				return;
+			}
+
+			Promise.all(jobs)
+				.then(() => alert('Datos importados correctamente.'))
+				.catch((err) => {
+					console.error('Error al importar datos del CV:', err);
+					alert('Algo falló al importar. Revisa la consola.');
 				});
 		};
 	</script>

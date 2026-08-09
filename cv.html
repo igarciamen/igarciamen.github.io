@@ -92,44 +92,8 @@
 		<div class="panel">
 			<button class="panel-close" onclick="closeWorkModal()">&times;</button>
 			<div class="panel-body">
-				
 				<h3>Work Experience</h3>
-				<div class="timeline-entry">
-					<span class="period">Sept 2024 — March 2026</span>
-					<h4>Customer service agent</h4>
-					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">BSH GROUP — Remote position alongside my IT studies</span>
-					<p>English and French customer service for Canada, handling calls and chat enquiries, email management, incident resolution.</p>
-				</div>
-				<div class="timeline-entry">
-					<span class="period">Jul 2019 — Jan 2022</span>
-					<h4>Administrative assistant</h4>
-					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">EUROPEAN COMMISSION - ECFIN — Luxembourg</span>
-					<p>Administrative support to advisers. Coordination arrangements with other departments. Maintaining electronic filing systems and databases.</p>
-				</div>
-				<div class="timeline-entry">
-					<span class="period">Nov 2005 — Jun 2019</span>
-					<h4>Administrative assistant</h4>
-					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">CUATRECASAS LAW FIRM — Zaragoza</span>
-					<p>Administrative support to managers and staff, setting up work procedures in the department. IT agent in the firm (aimed at improving the use of technology in the firm and training staff about corporate software and procedures.).</p>
-				</div>
-				<div class="timeline-entry">
-					<span class="period">Jan 2003 — Sept 2005</span>
-					<h4>Administrative Assistant</h4>
-					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">FMC, S.A. — Valencia</span>
-					<p>Management of import procedures from USA. Management of export procedures within EU.</p>
-				</div>
-				<div class="timeline-entry">
-					<span class="period">Feb 2001 — Sept 2002</span>
-					<h4>Administrative Assistant</h4>
-					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">ZANINI — Zaragoza</span>
-					<p>Handling phone calls, managing orders, coordinating meetings.</p>
-				</div>
-				<div class="timeline-entry">
-					<span class="period">Mar 2000 — Jan 2001</span>
-					<h4>Receptionist</h4>
-					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">DISNEYLAND HOTEL — Paris</span>
-					<p>General customer service in English, French, and Spanish.</p>
-				</div>
+				<div id="workModalItems"></div>
 			</div>
 		</div>
 	</div>
@@ -139,18 +103,8 @@
 		<div class="panel">
 			<button class="panel-close" onclick="closeEducationModal()">&times;</button>
 			<div class="panel-body">
-				
 				<h3>Education</h3>
-				<div class="timeline-entry">
-					<span class="period">2023 — Present</span>
-					<h4>Bachelor's Degree in Techniques for Software Application Development</h4>
-					<p>Universitat Oberta de Catalunya</p>
-				</div>
-				<div class="timeline-entry">
-					<span class="period">1998 — 1999</span>
-					<h4>Higher National Certificate in Secretarial Studies</h4>
-					<p>IES Itaca — Zaragoza</p>
-				</div>
+				<div id="educationModalItems"></div>
 			</div>
 		</div>
 	</div>
@@ -176,17 +130,45 @@
 		<div class="panel">
 			<button class="panel-close" onclick="closeSkillsModal()">&times;</button>
 			<div class="panel-body">
-
 				<h3>Skills</h3>
-				<p style="color: var(--ink-soft); font-size: 14px; line-height: 1.8; margin-top: 18px;">
-					Analytical thinking · Detail-oriented with high attention to accuracy · Good planning and organisational skills · Strong interpersonal skills and empathy in customer interactions · Collaborative team player with mentoring capabilities · Clear and precise speaking · Advanced proficiency in MS Office Suite · Experience with multiple CRM systems (SAP, Salesforce)
-				</p>
+				<p id="skillsModalItems" style="color: var(--ink-soft); font-size: 14px; line-height: 1.8; margin-top: 18px;"></p>
 			</div>
 		</div>
 	</div>
 
 	<script type="module">
-		import { login, watchAuth } from './firebase-config.js';
+		import { login, watchAuth, watchCvItems } from './firebase-config.js';
+
+		function escapeHtml(str) {
+			const div = document.createElement('div');
+			div.textContent = str || '';
+			return div.innerHTML;
+		}
+
+		watchCvItems('workExperience', (items) => {
+			document.getElementById('workModalItems').innerHTML = items.map((item) => `
+				<div class="timeline-entry">
+					<span class="period">${escapeHtml(item.period)}</span>
+					<h4>${escapeHtml(item.title)}</h4>
+					<span class="mono" style="font-size:12.5px; color:var(--ink-faint); display:block; margin-bottom:6px;">${escapeHtml(item.company)}</span>
+					<p>${escapeHtml(item.description)}</p>
+				</div>
+			`).join('');
+		});
+
+		watchCvItems('education', (items) => {
+			document.getElementById('educationModalItems').innerHTML = items.map((item) => `
+				<div class="timeline-entry">
+					<span class="period">${escapeHtml(item.period)}</span>
+					<h4>${escapeHtml(item.title)}</h4>
+					<p>${escapeHtml(item.institution)}</p>
+				</div>
+			`).join('');
+		});
+
+		watchCvItems('skills', (items) => {
+			document.getElementById('skillsModalItems').textContent = items.map((item) => item.text).join(' · ');
+		});
 
 		document.getElementById('navToggle').addEventListener('click', () => {
 			document.getElementById('navLinks').classList.toggle('open');
