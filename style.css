@@ -284,7 +284,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero ul li:last-child { border-bottom: 1px solid var(--line); }
 .skills-list {
   display: grid;
-  grid-template-columns: 130px repeat(5, 64px);
+  grid-template-columns: 130px repeat(8, 64px);
   align-items: end;
   row-gap: 26px;
   column-gap: 16px;

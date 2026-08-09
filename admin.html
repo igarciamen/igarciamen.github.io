@@ -82,7 +82,7 @@
 		<section class="admin-section">
 			<div class="wrap">
 				<h2>Importar datos actuales del CV</h2>
-				<p class="hint" style="margin-bottom: 14px;">Rellena de una vez Education, Work Experience y Skills con el contenido que ya tenías fijo en cv.html. Solo hace falta ejecutarlo una vez; si una sección ya tiene elementos, se salta para no duplicar.</p>
+				<p class="hint" style="margin-bottom: 14px;">Rellena de una vez Education, Work Experience, Skills y Technical Skills con el contenido que ya tenías fijo en cv.html / index.html. Solo hace falta ejecutarlo una vez; si una sección ya tiene elementos, se salta para no duplicar.</p>
 				<button type="button" class="btn btn-outline" onclick="seedCvData()">Importar datos existentes</button>
 			</div>
 		</section>
@@ -188,10 +188,54 @@
 				</form>
 			</div>
 		</section>
-		<section class="admin-section" style="border-bottom: none;">
+		<section class="admin-section">
 			<div class="wrap">
 				<h2>Skills (CV)</h2>
 				<div id="skillsList">
+					<p class="mono" style="color: var(--ink-faint); font-size: 13px;">cargando…</p>
+				</div>
+			</div>
+		</section>
+
+		<!-- ---------- Technical Skills (About me) ---------- -->
+		<section class="admin-section">
+			<div class="wrap" style="max-width: 640px;">
+				<h2 id="technicalSkillsFormTitle">Agregar tecnología</h2>
+				<div id="technicalSkillsStatusMsg" class="status-msg"></div>
+				<div class="hint" style="margin-bottom: 14px;">Máximo 8 tecnologías por categoría.</div>
+				<form id="technicalSkillsForm" onsubmit="submitCvForm('technicalSkills', event)">
+					<div class="field">
+						<label for="technicalSkills-category">Categoría</label>
+						<select id="technicalSkills-category" required>
+							<option value="Frontend">Frontend</option>
+							<option value="Backend">Backend</option>
+							<option value="Databases">Databases</option>
+							<option value="Tools">Tools</option>
+						</select>
+					</div>
+					<div class="field">
+						<label for="technicalSkills-order">Orden dentro de la categoría (número, menor aparece primero)</label>
+						<input type="number" id="technicalSkills-order" value="0" required>
+					</div>
+					<div class="field">
+						<label for="technicalSkills-name">Nombre</label>
+						<input type="text" id="technicalSkills-name" placeholder="HTML" required>
+					</div>
+					<div class="field">
+						<label for="technicalSkills-iconUrl">URL del icono</label>
+						<input type="url" id="technicalSkills-iconUrl" placeholder="https://www.w3.org/html/logo/downloads/HTML5_Logo.svg" required>
+					</div>
+					<div style="display:flex; gap: 12px;">
+						<button type="submit" class="btn" id="technicalSkillsSubmitBtn">Agregar tecnología</button>
+						<button type="button" class="btn btn-outline" id="technicalSkillsCancelBtn" onclick="resetCvForm('technicalSkills')" style="display:none;">Cancelar edición</button>
+					</div>
+				</form>
+			</div>
+		</section>
+		<section class="admin-section" style="border-bottom: none;">
+			<div class="wrap">
+				<h2>Technical Skills (About me)</h2>
+				<div id="technicalSkillsList">
 					<p class="mono" style="color: var(--ink-faint); font-size: 13px;">cargando…</p>
 				</div>
 			</div>
@@ -396,6 +440,12 @@
 				addLabel: 'Agregar habilidad',
 				fields: ['text'],
 				summary: (item) => `<h4>${escapeHtml(item.text)}</h4>`
+			},
+			technicalSkills: {
+				addLabel: 'Agregar tecnología',
+				fields: ['category', 'name', 'iconUrl'],
+				maxPerCategory: 8,
+				summary: (item) => `<img src="${escapeHtml(item.iconUrl)}" alt="" style="width:20px; height:20px; object-fit:contain; vertical-align:middle; margin-right:8px;"><h4 style="display:inline;">${escapeHtml(item.name)}</h4><span class="mono">${escapeHtml(item.category)}</span>`
 			}
 		};
 
@@ -471,6 +521,14 @@
 			const data = { order: Number(document.getElementById(kind + '-order').value) || 0 };
 			cfg.fields.forEach((f) => { data[f] = document.getElementById(kind + '-' + f).value.trim(); });
 
+			if (cfg.maxPerCategory && !cfg.editingId) {
+				const countInCategory = cfg.items.filter((x) => x.category === data.category).length;
+				if (countInCategory >= cfg.maxPerCategory) {
+					showCvStatus(kind, `Ya hay ${cfg.maxPerCategory} tecnologías en "${data.category}". Elimina una para añadir otra.`, 'err');
+					return;
+				}
+			}
+
 			const action = cfg.editingId ? updateCvItem(kind, cfg.editingId, data) : addCvItem(kind, data);
 			action
 				.then(() => {
@@ -486,7 +544,7 @@
 		// Importación única del contenido que antes estaba fijo en cv.html.
 		// Si una colección ya tiene elementos, se salta para no duplicar.
 		window.seedCvData = function () {
-			if (!confirm('Esto añadirá a Firestore los datos que ya tenías fijos en cv.html (las secciones que sigan vacías). ¿Continuar?')) return;
+			if (!confirm('Esto añadirá a Firestore los datos que ya tenías fijos en cv.html / index.html (las secciones que sigan vacías). ¿Continuar?')) return;
 
 			const seedData = {
 				education: [
@@ -510,6 +568,25 @@
 					{ order: 6, text: 'Clear and precise speaking' },
 					{ order: 7, text: 'Advanced proficiency in MS Office Suite' },
 					{ order: 8, text: 'Experience with multiple CRM systems (SAP, Salesforce)' }
+				],
+				technicalSkills: [
+					{ order: 1, category: 'Frontend', name: 'HTML', iconUrl: 'https://www.w3.org/html/logo/downloads/HTML5_Logo.svg' },
+					{ order: 2, category: 'Frontend', name: 'CSS', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/CSS3_logo_and_wordmark.svg' },
+					{ order: 3, category: 'Frontend', name: 'TypeScript', iconUrl: 'https://raw.githubusercontent.com/remojansen/logo.ts/master/ts.png' },
+					{ order: 4, category: 'Frontend', name: 'JavaScript', iconUrl: 'Resources/JavaScript-logo.png' },
+					{ order: 5, category: 'Frontend', name: 'Angular', iconUrl: 'https://angular.io/assets/images/logos/angular/angular.svg' },
+					{ order: 1, category: 'Backend', name: 'Java', iconUrl: 'https://upload.wikimedia.org/wikipedia/en/3/30/Java_programming_language_logo.svg' },
+					{ order: 2, category: 'Backend', name: 'REST APIs', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Swagger-logo.png' },
+					{ order: 3, category: 'Backend', name: 'Spring Boot', iconUrl: 'https://spring.io/img/spring-boot.svg' },
+					{ order: 4, category: 'Backend', name: 'C', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/1/19/C_Logo.png' },
+					{ order: 1, category: 'Databases', name: 'PostgreSQL', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Postgresql_elephant.svg' },
+					{ order: 2, category: 'Databases', name: 'SQL', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Sql_data_base_with_logo.png' },
+					{ order: 3, category: 'Databases', name: 'Hibernate', iconUrl: 'https://www.vectorlogo.zone/logos/hibernate/hibernate-icon.svg' },
+					{ order: 1, category: 'Tools', name: 'UML', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/d/d5/UML_logo.svg' },
+					{ order: 2, category: 'Tools', name: 'Git', iconUrl: 'https://git-scm.com/images/logos/downloads/Git-Icon-1788C.svg' },
+					{ order: 3, category: 'Tools', name: 'Docker', iconUrl: 'https://www.docker.com/app/uploads/2022/03/Moby-logo.png' },
+					{ order: 4, category: 'Tools', name: 'IntelliJ IDEA', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/9c/IntelliJ_IDEA_Icon.svg' },
+					{ order: 5, category: 'Tools', name: 'VS Code', iconUrl: 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg' }
 				]
 			};
 
