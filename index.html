@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Isabel García - Software developer</title>
-	<link rel="stylesheet" href="style.css?v=37">
+	<link rel="stylesheet" href="style.css?v=38">
 </head>
 <body>
 
@@ -49,6 +49,10 @@
   <li class="skill-item">
     <strong>Tools:</strong>
     <div class="skill-icons" id="skills-Tools"></div>
+  </li>
+  <li class="skill-item">
+    <strong>Mobile:</strong>
+    <div class="skill-icons" id="skills-Mobile"></div>
   </li>
 </ul>
 
@@ -123,7 +127,7 @@
 		// Technical Skills: agrupa por categoría (Frontend/Backend/Databases/Tools)
 		// y rellena cada columna de iconos ya existente en el HTML.
 		watchCvItems('technicalSkills', (items) => {
-			['Frontend', 'Backend', 'Databases', 'Tools'].forEach((category) => {
+			['Frontend', 'Backend', 'Databases', 'Tools', 'Mobile'].forEach((category) => {
 				const container = document.getElementById('skills-' + category);
 				if (!container) return;
 				container.innerHTML = items

@@ -296,6 +296,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .skill-item:nth-child(2) strong, .skill-item:nth-child(2) .skill-icon-item { grid-row: 2; }
 .skill-item:nth-child(3) strong, .skill-item:nth-child(3) .skill-icon-item { grid-row: 3; }
 .skill-item:nth-child(4) strong, .skill-item:nth-child(4) .skill-icon-item { grid-row: 4; }
+.skill-item:nth-child(5) strong, .skill-item:nth-child(5) .skill-icon-item { grid-row: 5; }
 .skill-icons { display: contents; }
 .skill-icon-item {
   display: flex;
