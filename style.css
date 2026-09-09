@@ -346,7 +346,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 
 /* ---------- Secciones ---------- */
-.section { padding: 90px 0; }
+.section { padding: 90px 0 45px 0; }
 .section.alt { background: var(--bg-alt); }
 .section-head {
   display: flex;
