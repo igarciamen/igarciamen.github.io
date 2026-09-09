@@ -148,13 +148,12 @@
 			document.getElementById('projectModalContent').innerHTML = `
 				<div class="thumb-lg"><img src="${escapeHtml(p.modalImageUrl || p.imageUrl)}" alt="${escapeHtml(p.title)}"></div>
 				<div class="panel-body">
-					<span class="idx mono">PROYECTO</span>
 					<h3>${escapeHtml(p.title)}</h3>
 					<p class="desc">${escapeHtml(p.description)}</p>
 					<div class="tags">${(p.stack || []).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}</div>
 					<div class="links">
-						${p.githubUrl ? `<a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Ver código</a>` : ''}
-						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Ver demo</a>` : ''}
+						${p.githubUrl ? `<a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">View code</a>` : ''}
+						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Watch demo</a>` : ''}
 					</div>
 				</div>
 			`;
