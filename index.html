@@ -202,7 +202,6 @@
 			featuredGrid.innerHTML = projects.map((p, i) => `
 				<div class="project-card" onclick="openProjectModal('${p.id}')">
 					<div class="thumb"><img src="${escapeHtml(p.imageUrl)}" alt="${escapeHtml(p.title)}" loading="lazy"></div>
-					<span class="idx mono">PRY / ${String(i + 1).padStart(2, '0')}</span>
 					<h3>${escapeHtml(p.title)}</h3>
 					<p class="desc">${escapeHtml(p.description)}</p>
 					<div class="tags">
