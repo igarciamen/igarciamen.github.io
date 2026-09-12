@@ -21,13 +21,6 @@ import {
   orderBy,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
-import {
-  getStorage,
-  ref,
-  uploadBytes,
-  getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.13.0/firebase-storage.js";
-
 const firebaseConfig = {
   apiKey: "AIzaSyBNULQgIIG9QAfqQVnN33_gEYF4DibdjKw",
   authDomain: "mi-sitio-admin.firebaseapp.com",
@@ -41,7 +34,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 /* ---------- Autenticación ---------- */
 
@@ -83,19 +75,6 @@ export function updateProject(id, data) {
 
 export function deleteProject(id) {
   return deleteDoc(doc(db, 'projects', id));
-}
-
-/* ---------- Imágenes de proyecto (Firebase Storage) ---------- */
-
-// Sube un archivo de imagen elegido en el admin y devuelve su URL pública
-// para guardar en imageUrl / modalImageUrl. Cada subida usa una ruta única
-// para no pisar archivos entre proyectos distintos.
-export async function uploadProjectImage(file) {
-  const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
-  const path = `projects/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safeName}`;
-  const fileRef = ref(storage, path);
-  await uploadBytes(fileRef, file);
-  return getDownloadURL(fileRef);
 }
 
 /* ---------- CV: Education / Work Experience / Skills (Firestore) ----------

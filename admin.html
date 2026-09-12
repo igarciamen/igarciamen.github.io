@@ -41,15 +41,15 @@
 						<input type="text" id="title" required>
 					</div>
 					<div class="field">
-						<label for="imageFile">Imagen (miniatura)</label>
-						<input type="file" id="imageFile" accept="image/*">
-						<div class="hint">Sube el archivo desde tu ordenador. Se usa en la tarjeta del listado de proyectos.</div>
+						<label for="imageUrl">Ruta de la imagen (miniatura)</label>
+						<input type="text" id="imageUrl" placeholder="assets/projects/mi-proyecto-thumb.jpg" required>
+						<div class="hint">Copia el archivo a la carpeta assets/projects/ del repositorio (con git) y escribe aquí su ruta relativa. Se usa en la tarjeta del listado de proyectos.</div>
 						<img id="imagePreview" class="img-preview" style="display:none;" alt="">
 					</div>
 					<div class="field">
-						<label for="modalImageFile">Imagen (modal, opcional)</label>
-						<input type="file" id="modalImageFile" accept="image/*">
-						<div class="hint">Se muestra al abrir el detalle del proyecto. Si no subes ninguna, se usa la miniatura.</div>
+						<label for="modalImageUrl">Ruta de la imagen (modal, opcional)</label>
+						<input type="text" id="modalImageUrl" placeholder="assets/projects/mi-proyecto-main.jpg">
+						<div class="hint">Se muestra al abrir el detalle del proyecto. Si la dejas vacía, se usa la miniatura.</div>
 						<img id="modalImagePreview" class="img-preview" style="display:none;" alt="">
 					</div>
 					<div class="field">
@@ -104,10 +104,10 @@
 		</section>
 		<section class="admin-section" style="border-bottom: none;">
 			<div class="wrap">
-				<h2>Migrar imágenes de proyectos a Firebase Storage</h2>
-				<p class="hint" style="margin-bottom: 14px;">Ejecuta esto una sola vez: descarga las imágenes de proyecto que todavía apuntan a postimg.cc / Google Drive y las vuelve a subir a Firebase Storage, actualizando cada proyecto. Los proyectos que ya usen Storage se saltan.</p>
+				<h2>Migrar imágenes de proyectos a rutas locales</h2>
+				<p class="hint" style="margin-bottom: 14px;">Ejecuta esto una sola vez, después de que las 24 imágenes ya estén copiadas en assets/projects/ dentro del repositorio: actualiza cada proyecto para que apunte a su archivo local en vez de a postimg.cc / Google Drive.</p>
 				<div id="migrateStatusMsg" class="status-msg"></div>
-				<button type="button" class="btn btn-outline" id="migrateBtn" onclick="migrateProjectImages()">Migrar imágenes existentes</button>
+				<button type="button" class="btn btn-outline" id="migrateBtn" onclick="migrateProjectImages()">Migrar rutas de imagen</button>
 			</div>
 		</section>
 		</div>
@@ -277,7 +277,7 @@
 	</main>
 
 	<script type="module">
-		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, uploadProjectImage, watchCvItems, addCvItem, updateCvItem, deleteCvItem } from './firebase-config.js';
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchCvItems, addCvItem, updateCvItem, deleteCvItem } from './firebase-config.js';
 
 		// Pestañas del panel: muestra un panel a la vez, sin scroll para buscar secciones.
 		window.showAdminTab = function (tab) {
@@ -319,8 +319,6 @@
 
 		let editingId = null;
 		let allProjects = [];
-		let currentImageUrl = '';
-		let currentModalImageUrl = '';
 
 		function setPreview(elId, url) {
 			const img = document.getElementById(elId);
@@ -328,14 +326,8 @@
 			else { img.removeAttribute('src'); img.style.display = 'none'; }
 		}
 
-		document.getElementById('imageFile').addEventListener('change', (e) => {
-			const f = e.target.files[0];
-			if (f) setPreview('imagePreview', URL.createObjectURL(f));
-		});
-		document.getElementById('modalImageFile').addEventListener('change', (e) => {
-			const f = e.target.files[0];
-			if (f) setPreview('modalImagePreview', URL.createObjectURL(f));
-		});
+		document.getElementById('imageUrl').addEventListener('input', (e) => setPreview('imagePreview', e.target.value.trim()));
+		document.getElementById('modalImageUrl').addEventListener('input', (e) => setPreview('modalImagePreview', e.target.value.trim()));
 
 		watchProjects((projects) => {
 			allProjects = projects;
@@ -413,13 +405,11 @@
 			const p = allProjects.find(x => x.id === id);
 			if (!p) return;
 			editingId = id;
-			currentImageUrl = p.imageUrl || '';
-			currentModalImageUrl = p.modalImageUrl || '';
 			document.getElementById('title').value = p.title || '';
-			document.getElementById('imageFile').value = '';
-			document.getElementById('modalImageFile').value = '';
-			setPreview('imagePreview', currentImageUrl);
-			setPreview('modalImagePreview', currentModalImageUrl);
+			document.getElementById('imageUrl').value = p.imageUrl || '';
+			document.getElementById('modalImageUrl').value = p.modalImageUrl || '';
+			setPreview('imagePreview', p.imageUrl || '');
+			setPreview('modalImagePreview', p.modalImageUrl || '');
 			document.getElementById('description').value = p.description || '';
 			document.getElementById('stack').value = (p.stack || []).join(', ');
 			document.getElementById('githubUrl').value = p.githubUrl || '';
@@ -433,8 +423,6 @@
 
 		window.resetForm = function () {
 			editingId = null;
-			currentImageUrl = '';
-			currentModalImageUrl = '';
 			document.getElementById('projectForm').reset();
 			setPreview('imagePreview', '');
 			setPreview('modalImagePreview', '');
@@ -467,47 +455,29 @@
 				.catch(() => showStatus('No se pudo cambiar la visibilidad.', 'err'));
 		};
 
-		window.handleSubmit = async function (event) {
+		window.handleSubmit = function (event) {
 			event.preventDefault();
+			const data = {
+				title: document.getElementById('title').value.trim(),
+				imageUrl: document.getElementById('imageUrl').value.trim(),
+				modalImageUrl: document.getElementById('modalImageUrl').value.trim(),
+				description: document.getElementById('description').value.trim(),
+				stack: document.getElementById('stack').value.split(',').map(s => s.trim()).filter(Boolean),
+				githubUrl: document.getElementById('githubUrl').value.trim(),
+				demoUrl: document.getElementById('demoUrl').value.trim(),
+				docLinks: getDocLinksFromForm()
+			};
 
-			const imageFile = document.getElementById('imageFile').files[0];
-			const modalImageFile = document.getElementById('modalImageFile').files[0];
-
-			if (!editingId && !imageFile) {
-				showStatus('Selecciona una imagen de miniatura.', 'err');
-				return;
-			}
-
-			const submitBtn = document.getElementById('submitBtn');
-			const originalLabel = submitBtn.textContent;
-			submitBtn.disabled = true;
-			submitBtn.textContent = 'Subiendo imágenes...';
-
-			try {
-				const imageUrl = imageFile ? await uploadProjectImage(imageFile) : currentImageUrl;
-				const modalImageUrl = modalImageFile ? await uploadProjectImage(modalImageFile) : currentModalImageUrl;
-
-				const data = {
-					title: document.getElementById('title').value.trim(),
-					imageUrl,
-					modalImageUrl,
-					description: document.getElementById('description').value.trim(),
-					stack: document.getElementById('stack').value.split(',').map(s => s.trim()).filter(Boolean),
-					githubUrl: document.getElementById('githubUrl').value.trim(),
-					demoUrl: document.getElementById('demoUrl').value.trim(),
-					docLinks: getDocLinksFromForm()
-				};
-
-				await (editingId ? updateProject(editingId, data) : addProject({ ...data, isPublic: true }));
-				showStatus(editingId ? 'Cambios guardados.' : 'Proyecto publicado.', 'ok');
-				resetForm();
-			} catch (err) {
-				console.error('Error al guardar en Firestore:', err);
-				showStatus('Algo falló al guardar. Intenta de nuevo.', 'err');
-			} finally {
-				submitBtn.disabled = false;
-				submitBtn.textContent = originalLabel;
-			}
+			const action = editingId ? updateProject(editingId, data) : addProject({ ...data, isPublic: true });
+			action
+				.then(() => {
+					showStatus(editingId ? 'Cambios guardados.' : 'Proyecto publicado.', 'ok');
+					resetForm();
+				})
+				.catch((err) => {
+					console.error('Error al guardar en Firestore:', err);
+					showStatus('Algo falló al guardar. Intenta de nuevo.', 'err');
+				});
 		};
 
 		/* ---------- CV: Education / Work Experience / Skills ----------
@@ -695,12 +665,28 @@
 				});
 		};
 
-		// Migración única de las imágenes de proyecto que aún apuntan a
-		// postimg.cc / Google Drive: las descarga y las vuelve a subir a
-		// Firebase Storage. Es segura de ejecutar más de una vez: los
-		// proyectos que ya usan Storage se saltan.
+		// Migración única: las imágenes de proyecto que aún apuntan a
+		// postimg.cc / Google Drive pasan a apuntar a su copia local en
+		// assets/projects/ (subida antes al repo con git). Segura de
+		// ejecutar más de una vez: los proyectos que ya usan una ruta local
+		// se saltan.
+		const imagePathMigration = {
+			'74tSV2H9N9hWgDeVuNTp': { imageUrl: 'assets/projects/aitranslator-thumb.jpg', modalImageUrl: 'assets/projects/aitranslator-main.jpg' },
+			'Axp6HyBDkGcaaimH4oLW': { imageUrl: 'assets/projects/business-investments-portal-thumb.png', modalImageUrl: 'assets/projects/business-investments-portal-main.png' },
+			'DlZ7UENBNMFpdk626P4u': { imageUrl: 'assets/projects/control-remote-simple-thumb.png', modalImageUrl: 'assets/projects/control-remote-simple-main.png' },
+			'MyfgKlXepBeQNgnoPm10': { imageUrl: 'assets/projects/todo-list-android-thumb.jpg', modalImageUrl: 'assets/projects/todo-list-android-main.jpg' },
+			'PCDcnOCNTp48idJJAgx2': { imageUrl: 'assets/projects/control-remote-full-thumb.png', modalImageUrl: 'assets/projects/control-remote-full-main.png' },
+			'SogZIQWrnQs1hYnFodio': { imageUrl: 'assets/projects/public-surveys-thumb.png', modalImageUrl: 'assets/projects/public-surveys-main.png' },
+			'Tdawf43Xjrz43FuloOzD': { imageUrl: 'assets/projects/ecommerce-platform-thumb.png', modalImageUrl: 'assets/projects/ecommerce-platform-main.png' },
+			'ZuKCs26H7TecLySxoE3h': { imageUrl: 'assets/projects/secgest-thumb.png', modalImageUrl: 'assets/projects/secgest-main.png' },
+			'oqbN2AfgQRm0bJn8qx0r': { imageUrl: 'assets/projects/opowatch-thumb.png', modalImageUrl: 'assets/projects/opowatch-main.png' },
+			'rGEeel3UlyjHwvq9P17w': { imageUrl: 'assets/projects/my-own-whatsapp-thumb.jpg', modalImageUrl: 'assets/projects/my-own-whatsapp-main.jpg' },
+			'sBjokWmGSp9rDQJ0exza': { imageUrl: 'assets/projects/device-location-module-thumb.jpg', modalImageUrl: 'assets/projects/device-location-module-main.jpg' },
+			'vqsE83sRP0fT2V8etByl': { imageUrl: 'assets/projects/passwords-manager-thumb.jpg', modalImageUrl: 'assets/projects/passwords-manager-main.jpg' }
+		};
+
 		window.migrateProjectImages = async function () {
-			if (!confirm('Esto descargará las imágenes antiguas (postimg.cc / Google Drive) y las volverá a subir a Firebase Storage para cada proyecto que todavía no las tenga migradas. ¿Continuar?')) return;
+			if (!confirm('Esto actualiza cada proyecto para que apunte a su imagen local en assets/projects/ en vez de a postimg.cc / Google Drive. Asegúrate de que esos archivos ya están subidos al repositorio. ¿Continuar?')) return;
 
 			const btn = document.getElementById('migrateBtn');
 			btn.disabled = true;
@@ -711,29 +697,17 @@
 				el.className = 'status-msg show ' + (type || 'ok');
 			}
 
-			const isMigrated = (url) => !!url && url.includes('firebasestorage');
+			const isLocal = (url) => !!url && !url.startsWith('http');
 
-			async function migrateUrl(url) {
-				const res = await fetch(url);
-				if (!res.ok) throw new Error('No se pudo descargar ' + url);
-				const blob = await res.blob();
-				const nameFromUrl = decodeURIComponent(url.split('/').pop().split('?')[0]) || 'image.jpg';
-				const file = new File([blob], nameFromUrl, { type: blob.type || 'image/jpeg' });
-				return uploadProjectImage(file);
-			}
-
-			let done = 0, failed = 0;
+			let done = 0, skipped = 0, failed = 0;
 			for (const p of allProjects) {
-				const needsImage = p.imageUrl && !isMigrated(p.imageUrl);
-				const needsModal = p.modalImageUrl && !isMigrated(p.modalImageUrl);
-				if (!needsImage && !needsModal) continue;
+				const mapping = imagePathMigration[p.id];
+				if (!mapping) { skipped++; continue; }
+				if (isLocal(p.imageUrl) && isLocal(p.modalImageUrl)) { skipped++; continue; }
 
 				setMsg(`Migrando "${p.title}"...`, 'ok');
 				try {
-					const update = {};
-					if (needsImage) update.imageUrl = await migrateUrl(p.imageUrl);
-					if (needsModal) update.modalImageUrl = await migrateUrl(p.modalImageUrl);
-					await updateProject(p.id, update);
+					await updateProject(p.id, mapping);
 					done++;
 				} catch (err) {
 					console.error('Error migrando ' + p.title, err);
@@ -741,7 +715,7 @@
 				}
 			}
 
-			setMsg(`Migración terminada: ${done} proyecto(s) actualizados${failed ? `, ${failed} fallidos (revisa la consola)` : ''}.`, failed ? 'err' : 'ok');
+			setMsg(`Migración terminada: ${done} actualizado(s), ${skipped} sin cambios${failed ? `, ${failed} fallidos (revisa la consola)` : ''}.`, failed ? 'err' : 'ok');
 			btn.disabled = false;
 		};
 	</script>
