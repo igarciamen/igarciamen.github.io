@@ -385,9 +385,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   display: flex;
   flex-direction: column;
   transition: background 0.2s ease, border-color 0.2s ease;
-  max-width: min(300px, 100%);
+  max-width: 300px;
 }
 .project-card:hover { background: var(--bg-alt); border-color: var(--ink-faint); }
+@media (max-width: 640px) {
+  .project-card { max-width: 100%; }
+}
 
 .project-card .thumb {
   aspect-ratio: 4 / 3;
