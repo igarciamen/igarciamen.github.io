@@ -577,7 +577,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .timeline-entry { padding: 22px 0; border-bottom: 1px solid var(--line); }
 .timeline-entry:last-child { border-bottom: none; }
-.timeline-entry .period { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-faint); display: block; margin-bottom: 6px; }
+.timeline-entry .period { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); display: block; margin-bottom: 6px; }
 .timeline-entry h4 { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 16px; margin-bottom: 4px; }
 .timeline-entry p { color: var(--ink-soft); font-size: 14.5px; }
 
