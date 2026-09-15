@@ -482,6 +482,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   overflow-y: auto;
 }
 .panel.small { max-width: 400px; }
+#languagesModal .panel { max-width: 320px; }
 
 .panel-close {
   position: absolute;
@@ -566,13 +567,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .skill-row {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   padding: 16px 0;
   border-bottom: 1px solid var(--line);
   font-size: 15px;
 }
-.skill-row .label { color: var(--ink); font-weight: 500; }
-.skill-row .value { color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: right; }
+.skill-row .label { color: var(--ink); font-weight: 500; width: 70px; flex-shrink: 0; }
+.skill-row .value { color: var(--ink-soft); font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: left; }
 .assessment-link { color: var(--accent); text-decoration: underline; }
 
 .timeline-entry { padding: 22px 0; border-bottom: 1px solid var(--line); }
