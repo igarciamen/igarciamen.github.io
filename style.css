@@ -212,7 +212,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 .hero .actions .btn:hover::before { transform: scaleX(1); }
 .hero .actions .btn:hover {
   border-color: #39324f;
-  color: #39324f;
+  color: var(--ink);
+  font-weight: 700;
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(57, 50, 79, 0.18);
 }
