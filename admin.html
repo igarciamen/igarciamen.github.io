@@ -66,8 +66,12 @@
 						<input type="url" id="githubUrl" placeholder="https://github.com/...">
 					</div>
 					<div class="field">
-						<label for="demoUrl">Enlace a demo (opcional)</label>
+						<label for="demoUrl">Enlace a demo en inglés (opcional)</label>
 						<input type="url" id="demoUrl" placeholder="https://...">
+					</div>
+					<div class="field">
+						<label for="demoUrlFr">Enlace a demo en francés (opcional)</label>
+						<input type="url" id="demoUrlFr" placeholder="https://...">
 					</div>
 					<div class="field">
 						<label>Documentación (privada, opcional)</label>
@@ -414,6 +418,7 @@
 			document.getElementById('stack').value = (p.stack || []).join(', ');
 			document.getElementById('githubUrl').value = p.githubUrl || '';
 			document.getElementById('demoUrl').value = p.demoUrl || '';
+			document.getElementById('demoUrlFr').value = p.demoUrlFr || '';
 			setDocLinksInForm(p.docLinks);
 			document.getElementById('formTitle').textContent = 'Editar proyecto';
 			document.getElementById('submitBtn').textContent = 'Guardar cambios';
@@ -465,6 +470,7 @@
 				stack: document.getElementById('stack').value.split(',').map(s => s.trim()).filter(Boolean),
 				githubUrl: document.getElementById('githubUrl').value.trim(),
 				demoUrl: document.getElementById('demoUrl').value.trim(),
+				demoUrlFr: document.getElementById('demoUrlFr').value.trim(),
 				docLinks: getDocLinksFromForm()
 			};
 
