@@ -252,6 +252,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   max-width: 780px;
   white-space: nowrap;
 }
+@media (min-width: 721px) {
+  .hero h1 { font-size: clamp(2rem, 3.2vw, 2.75rem); }
+}
 .hero h1 em {
   font-style: italic;
   color: var(--accent);
