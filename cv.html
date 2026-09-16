@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>CV</title>
-	<link rel="stylesheet" href="style.css?v=50">
+	<link rel="stylesheet" href="style.css?v=51">
 </head>
 <body>
 
@@ -26,7 +26,7 @@
 			<div class="wrap">
 				<h1>Curriculum Vitae</h1>
 				<div class="actions">
-					<a href="Resources/academic-record-2026.pdf" target="_blank" class="btn btn-outline">Academic record</a>
+					<button type="button" class="btn btn-outline" onclick="openAcademicModal()">Academic record</button>
 					<button type="button" class="btn btn-outline" onclick="openEducationModal()">Education</button>
 					<button type="button" class="btn btn-outline" onclick="openWorkModal()">Work Experience</button>
 					<div class="actions-break"></div>
@@ -83,6 +83,17 @@
 					</div>
 					<button type="submit" class="btn" style="width:100%; justify-content:center;">Entrar</button>
 				</form>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal de Academic record -->
+	<div id="academicModal" class="overlay">
+		<div class="panel" style="max-width: 820px;">
+			<button class="panel-close" onclick="closeAcademicModal()">&times;</button>
+			<div class="panel-body">
+				<h3>Academic record</h3>
+				<iframe src="Resources/academic-record-2026.pdf" style="width:100%; height:75vh; border:1px solid var(--line); border-radius: var(--radius); margin-top: 18px;"></iframe>
 			</div>
 		</div>
 	</div>
@@ -200,6 +211,11 @@
 				});
 		};
 		window.addEventListener('click', (e) => { if (e.target === loginModal) closeLoginModal(); });
+
+		const academicModal = document.getElementById('academicModal');
+		window.openAcademicModal = function () { academicModal.classList.add('active'); };
+		window.closeAcademicModal = function () { academicModal.classList.remove('active'); };
+		window.addEventListener('click', (e) => { if (e.target === academicModal) closeAcademicModal(); });
 
 		const workModal = document.getElementById('workModal');
 		window.openWorkModal = function () { workModal.classList.add('active'); };
