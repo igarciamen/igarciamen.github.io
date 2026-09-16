@@ -247,6 +247,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   font-size: clamp(1.9rem, 6.5vw, 4.2rem);
   line-height: 1.15;
   max-width: 780px;
+  font-variation-settings: 'opsz' 20;
 }
 .hero h1 em {
   font-style: italic;
