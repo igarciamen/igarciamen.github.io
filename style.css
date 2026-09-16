@@ -382,7 +382,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 .project-card {
   background: var(--bg);
-  border: 1px solid var(--line);
+  border: 1px solid var(--ink-faint);
   border-radius: var(--radius);
   overflow: hidden;
   padding: 0 0 26px;
@@ -392,7 +392,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   transition: background 0.2s ease, border-color 0.2s ease;
   max-width: 300px;
 }
-.project-card:hover { background: var(--bg-alt); border-color: var(--ink-faint); }
+.project-card:hover { background: var(--bg-alt); border-color: var(--ink-soft); }
 @media (max-width: 640px) {
   .project-card { max-width: 100%; }
 }
