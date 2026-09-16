@@ -171,6 +171,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   gap: 8px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 13px;
+  line-height: 1;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   padding: 12px 22px;
@@ -371,7 +372,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 }
 .section-head h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-family: 'Inter', sans-serif; color: var(--ink); line-height: 1.1; }
 .section-head .btn { white-space: nowrap; flex-shrink: 0; }
-.section-head .btn .arrow { display: inline-flex; align-items: center; line-height: 1; }
+.section-head .btn .arrow { display: inline-block; vertical-align: middle; line-height: 1; }
 
 /* ---------- Grid de proyectos ---------- */
 .project-grid {
