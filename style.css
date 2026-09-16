@@ -149,6 +149,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
 @media (max-width: 720px) {
   .nav-toggle { display: block; }
+  .brand { font-size: 15px; word-spacing: -3px; }
   .nav-links {
     position: absolute;
     top: 100%; left: 0; right: 0;
