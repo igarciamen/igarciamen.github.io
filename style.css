@@ -247,9 +247,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   font-family: 'Inter', sans-serif;
   font-weight: 600;
   letter-spacing: -0.01em;
-  font-size: clamp(1.9rem, 6.5vw, 4.2rem);
+  font-size: clamp(1.05rem, 5.5vw, 4.2rem);
   line-height: 1.15;
   max-width: 780px;
+  white-space: nowrap;
 }
 .hero h1 em {
   font-style: italic;
