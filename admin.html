@@ -22,6 +22,7 @@
 		<div class="wrap admin-tabs-inner">
 			<button type="button" class="admin-tab-btn active" data-tab="projects" onclick="showAdminTab('projects')">Proyectos</button>
 			<button type="button" class="admin-tab-btn" data-tab="import" onclick="showAdminTab('import')">Importar CV</button>
+			<button type="button" class="admin-tab-btn" data-tab="aboutMe" onclick="showAdminTab('aboutMe')">About me</button>
 			<button type="button" class="admin-tab-btn" data-tab="education" onclick="showAdminTab('education')">Education</button>
 			<button type="button" class="admin-tab-btn" data-tab="workExperience" onclick="showAdminTab('workExperience')">Work Experience</button>
 			<button type="button" class="admin-tab-btn" data-tab="skills" onclick="showAdminTab('skills')">Skills</button>
@@ -116,6 +117,24 @@
 				<p class="hint" style="margin-bottom: 14px;">Ejecuta esto una sola vez, después de que las 24 imágenes ya estén copiadas en assets/projects/ dentro del repositorio: actualiza cada proyecto para que apunte a su archivo local en vez de a postimg.cc / Google Drive.</p>
 				<div id="migrateStatusMsg" class="status-msg"></div>
 				<button type="button" class="btn btn-outline" id="migrateBtn" onclick="migrateProjectImages()">Migrar rutas de imagen</button>
+			</div>
+		</section>
+		</div>
+
+		<div class="admin-tab-panel" id="tab-aboutMe">
+		<!-- ---------- About me (texto de la portada) ---------- -->
+		<section class="admin-section" style="border-bottom: none;">
+			<div class="wrap" style="max-width: 640px;">
+				<h2>Texto de About me</h2>
+				<p class="hint" style="margin-bottom: 14px;">Texto de presentación que aparece en la portada (index.html), debajo del título. Puedes usar HTML básico (por ejemplo &lt;p class="lead"&gt;...&lt;/p&gt; para cada párrafo, o &lt;a href="..."&gt;...&lt;/a&gt; para enlaces).</p>
+				<div id="aboutMeStatusMsg" class="status-msg"></div>
+				<form id="aboutMeForm" onsubmit="submitAboutMe(event)">
+					<div class="field">
+						<label for="aboutMe-html">Contenido (HTML)</label>
+						<textarea id="aboutMe-html" rows="14" style="font-family: monospace; font-size: 13px;"></textarea>
+					</div>
+					<button type="submit" class="btn" id="aboutMeSubmitBtn">Guardar cambios</button>
+				</form>
 			</div>
 		</section>
 		</div>
@@ -285,7 +304,7 @@
 	</main>
 
 	<script type="module">
-		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchCvItems, addCvItem, updateCvItem, deleteCvItem } from './firebase-config.js';
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchCvItems, addCvItem, updateCvItem, deleteCvItem, watchAboutMe, saveAboutMe } from './firebase-config.js';
 
 		// Pestañas del panel: muestra un panel a la vez, sin scroll para buscar secciones.
 		window.showAdminTab = function (tab) {
@@ -608,6 +627,35 @@
 				.catch((err) => {
 					console.error('Error al guardar en Firestore:', err);
 					showCvStatus(kind, 'Algo falló al guardar. Intenta de nuevo.', 'err');
+				});
+		};
+
+		/* ---------- About me (texto de la portada) ---------- */
+
+		// Texto por defecto que trae index.html mientras Firestore no tenga
+		// nada guardado todavía; sirve de punto de partida en el textarea.
+		const defaultAboutMeHtml = `<p class="lead">I will complete my Bachelor's Degree in Techniques for Software Application Development in February 2027 (Universitat Oberta de Catalunya), with hands-on experience in technologies such as Java and Spring Boot on the backend, HTML, CSS, JavaScript and Angular on the frontend, and Kotlin/Jetpack Compose for Android, along with PostgreSQL, Git and Docker.</p>
+
+<p class="lead">Before moving into development, I spent 20+ years in administrative roles that increasingly involved technology, including coordinating IT-related feedback between teams and the IT department. Those experiences taught me to translate real user needs into working solutions. I apply that same approach to software development now.</p>
+
+<p class="lead">Trilingual (Spanish native, <a href="Resources/english-c2-certificate.pdf" target="_blank">English</a> C2 and <a href="Resources/french-c2-certificate.pdf" target="_blank">French</a> C2), I feel comfortable working across international teams.</p>`;
+
+		let aboutMeLoaded = false;
+		watchAboutMe((data) => {
+			// No sobrescribe lo que la persona esté escribiendo si ya se cargó una vez.
+			if (aboutMeLoaded) return;
+			aboutMeLoaded = true;
+			document.getElementById('aboutMe-html').value = (data && data.html) ? data.html : defaultAboutMeHtml;
+		});
+
+		window.submitAboutMe = function (event) {
+			event.preventDefault();
+			const html = document.getElementById('aboutMe-html').value.trim();
+			saveAboutMe(html)
+				.then(() => showCvStatus('aboutMe', 'Cambios guardados.', 'ok'))
+				.catch((err) => {
+					console.error('Error al guardar About me:', err);
+					showCvStatus('aboutMe', 'Algo falló al guardar. Intenta de nuevo.', 'err');
 				});
 		};
 

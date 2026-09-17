@@ -26,11 +26,13 @@
 			<div class="wrap">				
 				<h1>Junior Full Stack Developer</h1>
 
+<div id="aboutMeContent">
 <p class="lead">I will complete my Bachelor's Degree in Techniques for Software Application Development in February 2027 (Universitat Oberta de Catalunya), with hands-on experience in technologies such as Java and Spring Boot on the backend, HTML, CSS, JavaScript and Angular on the frontend, and Kotlin/Jetpack Compose for Android, along with PostgreSQL, Git and Docker.</p>
 
 <p class="lead">Before moving into development, I spent 20+ years in administrative roles that increasingly involved technology, including coordinating IT-related feedback between teams and the IT department. Those experiences taught me to translate real user needs into working solutions. I apply that same approach to software development now.</p>
 
 <p class="lead">Trilingual (Spanish native, <a href="Resources/english-c2-certificate.pdf" target="_blank">English</a> C2 and <a href="Resources/french-c2-certificate.pdf" target="_blank">French</a> C2), I feel comfortable working across international teams.</p>
+</div>
 
 <h2>Technical Skills</h2>
 <ul class="skills-list">
@@ -116,7 +118,15 @@
 	</div>
 
 	<script type="module">
-		import { login, watchAuth, watchProjects, watchCvItems } from './firebase-config.js';
+		import { login, watchAuth, watchProjects, watchCvItems, watchAboutMe } from './firebase-config.js';
+
+		// Texto de "About me": si hay contenido guardado desde el panel admin,
+		// sustituye el texto por defecto que queda en el HTML como fallback.
+		watchAboutMe((data) => {
+			if (data && data.html) {
+				document.getElementById('aboutMeContent').innerHTML = data.html;
+			}
+		});
 
 		// Technical Skills: agrupa por categoría (Frontend/Backend/Databases/Tools)
 		// y rellena cada columna de iconos ya existente en el HTML.
