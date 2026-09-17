@@ -19,7 +19,8 @@ import {
   onSnapshot,
   query,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBNULQgIIG9QAfqQVnN33_gEYF4DibdjKw",
@@ -107,4 +108,20 @@ export function updateCvItem(collectionName, id, data) {
 
 export function deleteCvItem(collectionName, id) {
   return deleteDoc(doc(db, collectionName, id));
+}
+
+/* ---------- About me (título + texto de la portada, Firestore) ----------
+   Documento único con el título (h1) y los 3 párrafos de presentación.
+   Si no existe todavía, index.html mantiene el texto por defecto del HTML. */
+
+const aboutMeDoc = doc(db, 'siteContent', 'aboutMe');
+
+export function watchAboutMe(callback) {
+  return onSnapshot(aboutMeDoc, (snap) => {
+    callback(snap.exists() ? snap.data() : null);
+  });
+}
+
+export function saveAboutMe(data) {
+  return setDoc(aboutMeDoc, { ...data, updatedAt: serverTimestamp() });
 }

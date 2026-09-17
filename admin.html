@@ -20,6 +20,7 @@
 
 	<nav class="admin-tabs">
 		<div class="wrap admin-tabs-inner">
+			<button type="button" class="admin-tab-btn" data-tab="aboutMe" onclick="showAdminTab('aboutMe')">About me</button>
 			<button type="button" class="admin-tab-btn active" data-tab="projects" onclick="showAdminTab('projects')">Proyectos</button>
 			<button type="button" class="admin-tab-btn" data-tab="import" onclick="showAdminTab('import')">Importar CV</button>
 			<button type="button" class="admin-tab-btn" data-tab="education" onclick="showAdminTab('education')">Education</button>
@@ -30,6 +31,36 @@
 	</nav>
 
 	<main>
+		<div class="admin-tab-panel" id="tab-aboutMe">
+		<!-- ---------- Texto de la portada (About me) ---------- -->
+		<section class="admin-section" style="border-bottom: none;">
+			<div class="wrap" style="max-width: 640px;">
+				<h2>Texto de About me</h2>
+				<p class="hint" style="margin-bottom: 14px;">Título y párrafos de presentación que aparecen en la portada (index.html).</p>
+				<div id="aboutMeStatusMsg" class="status-msg"></div>
+				<form id="aboutMeForm" onsubmit="submitAboutMe(event)">
+					<div class="field">
+						<label for="aboutMe-title">Título</label>
+						<input type="text" id="aboutMe-title" required>
+					</div>
+					<div class="field">
+						<label for="aboutMe-paragraph1">Párrafo 1</label>
+						<textarea id="aboutMe-paragraph1" rows="4" required></textarea>
+					</div>
+					<div class="field">
+						<label for="aboutMe-paragraph2">Párrafo 2</label>
+						<textarea id="aboutMe-paragraph2" rows="4" required></textarea>
+					</div>
+					<div class="field">
+						<label for="aboutMe-paragraph3">Párrafo 3</label>
+						<textarea id="aboutMe-paragraph3" rows="3" required></textarea>
+					</div>
+					<button type="submit" class="btn" id="aboutMeSubmitBtn">Guardar cambios</button>
+				</form>
+			</div>
+		</section>
+		</div>
+
 		<div class="admin-tab-panel active" id="tab-projects">
 		<section class="admin-section">
 			<div class="wrap" style="max-width: 640px;">
@@ -285,7 +316,7 @@
 	</main>
 
 	<script type="module">
-		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchCvItems, addCvItem, updateCvItem, deleteCvItem } from './firebase-config.js';
+		import { logout as firebaseLogout, watchAuth, watchProjects, addProject, updateProject, deleteProject, watchCvItems, addCvItem, updateCvItem, deleteCvItem, watchAboutMe, saveAboutMe } from './firebase-config.js';
 
 		// Pestañas del panel: muestra un panel a la vez, sin scroll para buscar secciones.
 		window.showAdminTab = function (tab) {
@@ -608,6 +639,45 @@
 				.catch((err) => {
 					console.error('Error al guardar en Firestore:', err);
 					showCvStatus(kind, 'Algo falló al guardar. Intenta de nuevo.', 'err');
+				});
+		};
+
+		/* ---------- About me (título + texto de la portada) ---------- */
+
+		// Texto por defecto que trae index.html mientras Firestore no tenga
+		// nada guardado todavía; sirve de punto de partida en el formulario.
+		const defaultAboutMe = {
+			title: 'Junior Full Stack Developer',
+			paragraph1: "I will complete my Bachelor's Degree in Techniques for Software Application Development in February 2027 (Universitat Oberta de Catalunya), with hands-on experience in technologies such as Java and Spring Boot on the backend, HTML, CSS, JavaScript and Angular on the frontend, and Kotlin/Jetpack Compose for Android, along with PostgreSQL, Git and Docker.",
+			paragraph2: "Before moving into development, I spent 20+ years in administrative roles that increasingly involved technology, including coordinating IT-related feedback between teams and the IT department. Those experiences taught me to translate real user needs into working solutions. I apply that same approach to software development now.",
+			paragraph3: "Trilingual (Spanish native, English C2 and French C2), I feel comfortable working across international teams."
+		};
+
+		let aboutMeLoaded = false;
+		watchAboutMe((data) => {
+			// No sobrescribe lo que la persona esté escribiendo si ya se cargó una vez.
+			if (aboutMeLoaded) return;
+			aboutMeLoaded = true;
+			const current = data || defaultAboutMe;
+			document.getElementById('aboutMe-title').value = current.title || defaultAboutMe.title;
+			document.getElementById('aboutMe-paragraph1').value = current.paragraph1 || defaultAboutMe.paragraph1;
+			document.getElementById('aboutMe-paragraph2').value = current.paragraph2 || defaultAboutMe.paragraph2;
+			document.getElementById('aboutMe-paragraph3').value = current.paragraph3 || defaultAboutMe.paragraph3;
+		});
+
+		window.submitAboutMe = function (event) {
+			event.preventDefault();
+			const data = {
+				title: document.getElementById('aboutMe-title').value.trim(),
+				paragraph1: document.getElementById('aboutMe-paragraph1').value.trim(),
+				paragraph2: document.getElementById('aboutMe-paragraph2').value.trim(),
+				paragraph3: document.getElementById('aboutMe-paragraph3').value.trim()
+			};
+			saveAboutMe(data)
+				.then(() => showCvStatus('aboutMe', 'Cambios guardados.', 'ok'))
+				.catch((err) => {
+					console.error('Error al guardar About me:', err);
+					showCvStatus('aboutMe', 'Algo falló al guardar. Intenta de nuevo.', 'err');
 				});
 		};
 
