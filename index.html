@@ -30,7 +30,7 @@
 
 <p class="lead" id="aboutMePara2">Before moving into development, I spent 20+ years in administrative roles that increasingly involved technology, including coordinating IT-related feedback between teams and the IT department. Those experiences taught me to translate real user needs into working solutions. I apply that same approach to software development now.</p>
 
-<p class="lead" id="aboutMePara3">Trilingual (Spanish native, English C2 and French C2), I feel comfortable working across international teams.</p>
+<p class="lead" id="aboutMePara3">Trilingual (Spanish native, <a href="Resources/english-c2-certificate.pdf" target="_blank">English</a> C2 and <a href="Resources/french-c2-certificate.pdf" target="_blank">French</a> C2), I feel comfortable working across international teams.</p>
 
 <h2>Technical Skills</h2>
 <ul class="skills-list">
@@ -120,12 +120,14 @@
 
 		// Texto de portada (título + 3 párrafos): si hay contenido guardado
 		// desde el panel admin, sustituye al texto por defecto del HTML.
+		// Los párrafos admiten HTML básico (p.ej. <a href="...">palabra</a>)
+		// escrito desde el panel admin, que solo usa la propia autora.
 		watchAboutMe((data) => {
 			if (!data) return;
 			if (data.title) document.getElementById('heroTitle').textContent = data.title;
-			if (data.paragraph1) document.getElementById('aboutMePara1').textContent = data.paragraph1;
-			if (data.paragraph2) document.getElementById('aboutMePara2').textContent = data.paragraph2;
-			if (data.paragraph3) document.getElementById('aboutMePara3').textContent = data.paragraph3;
+			if (data.paragraph1) document.getElementById('aboutMePara1').innerHTML = data.paragraph1;
+			if (data.paragraph2) document.getElementById('aboutMePara2').innerHTML = data.paragraph2;
+			if (data.paragraph3) document.getElementById('aboutMePara3').innerHTML = data.paragraph3;
 		});
 
 		// Technical Skills: agrupa por categoría (Frontend/Backend/Databases/Tools)
