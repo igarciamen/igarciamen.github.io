@@ -37,6 +37,10 @@
 				<div id="statusMsg" class="status-msg"></div>
 				<form id="projectForm" onsubmit="handleSubmit(event)">
 					<div class="field">
+						<label for="order">Orden (número, menor aparece primero)</label>
+						<input type="number" id="order" value="0" required>
+					</div>
+					<div class="field">
 						<label for="title">Título del proyecto</label>
 						<input type="text" id="title" required>
 					</div>
@@ -355,7 +359,7 @@
 						<img src="${escapeHtml(p.imageUrl)}" alt="">
 						<div class="info">
 							<h4>${escapeHtml(p.title)}</h4>
-							<span class="mono">${(p.stack || []).join(' · ')}</span>
+							<span class="mono">Orden: ${p.order ?? 0} · ${(p.stack || []).join(' · ')}</span>
 							<span class="visibility-badge mono ${isPublic ? 'is-public' : 'is-private'}">${isPublic ? '🌐 Público' : '🔒 Privado'}</span>
 						</div>
 						<div class="actions">
@@ -409,6 +413,7 @@
 			const p = allProjects.find(x => x.id === id);
 			if (!p) return;
 			editingId = id;
+			document.getElementById('order').value = p.order ?? 0;
 			document.getElementById('title').value = p.title || '';
 			document.getElementById('imageUrl').value = p.imageUrl || '';
 			document.getElementById('modalImageUrl').value = p.modalImageUrl || '';
@@ -463,6 +468,7 @@
 		window.handleSubmit = function (event) {
 			event.preventDefault();
 			const data = {
+				order: Number(document.getElementById('order').value) || 0,
 				title: document.getElementById('title').value.trim(),
 				imageUrl: document.getElementById('imageUrl').value.trim(),
 				modalImageUrl: document.getElementById('modalImageUrl').value.trim(),

@@ -54,10 +54,14 @@ export function watchAuth(callback) {
 
 // Escucha en tiempo real la lista de proyectos, ordenados del más nuevo al más viejo.
 // callback recibe un array de objetos { id, title, imageUrl, description, stack, githubUrl, demoUrl }
+// Ordena por el campo 'order' (ascendente, menor aparece primero). Los
+// proyectos sin 'order' (antiguos) van al final, manteniendo entre ellos
+// el orden original por fecha de creación gracias a que sort() es estable.
 export function watchProjects(callback) {
   const q = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
   return onSnapshot(q, (snapshot) => {
     const projects = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+    projects.sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
     callback(projects);
   });
 }
