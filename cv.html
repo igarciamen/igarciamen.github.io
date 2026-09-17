@@ -59,7 +59,7 @@
 
 	<footer>
 		<div class="footer-inner">
-			<span>&copy; 2027 Isabel García Méndez</span>
+			<span>&copy; 2026 - 2027 Isabel García Méndez</span>
 			<a class="priv" id="accessLink" onclick="openLoginModal()">Private access</a>
 		</div>
 	</footer>
@@ -93,7 +93,7 @@
 			<button class="panel-close" onclick="closeAcademicModal()">&times;</button>
 			<div class="panel-body">
 				<h3>Academic record</h3>
-				<iframe src="https://docs.google.com/viewer?embedded=true&url=https%3A%2F%2Figarciamen.github.io%2FResources%2Facademic-record-2026.pdf" style="width:100%; height:75vh; border:1px solid var(--line); border-radius: var(--radius); margin-top: 18px;"></iframe>
+				<iframe id="academicIframe" data-src="Resources/academic-record-2026.pdf" style="width:100%; height:75vh; border:1px solid var(--line); border-radius: var(--radius); margin-top: 18px;"></iframe>
 				<a href="Resources/academic-record-2026.pdf" target="_blank" class="mono" style="font-size:12px; color:var(--ink-faint); display:block; margin-top:10px;">Open PDF in a new tab</a>
 			</div>
 		</div>
@@ -214,7 +214,11 @@
 		window.addEventListener('click', (e) => { if (e.target === loginModal) closeLoginModal(); });
 
 		const academicModal = document.getElementById('academicModal');
-		window.openAcademicModal = function () { academicModal.classList.add('active'); };
+		window.openAcademicModal = function () {
+			const iframe = document.getElementById('academicIframe');
+			if (!iframe.src) iframe.src = iframe.dataset.src;
+			academicModal.classList.add('active');
+		};
 		window.closeAcademicModal = function () { academicModal.classList.remove('active'); };
 		window.addEventListener('click', (e) => { if (e.target === academicModal) closeAcademicModal(); });
 
