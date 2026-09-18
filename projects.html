@@ -136,7 +136,7 @@
 					<h3>${escapeHtml(p.title)}</h3>
 					<p class="desc">${escapeHtml(p.description)}</p>
 					<div class="tags">
-						${(p.stack || []).slice(0, 4).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}
+						${(p.stack || []).slice(0, 3).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}
 					</div>
 					<div class="links" onclick="event.stopPropagation()">
 						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Demo EN</a>` : ''}
