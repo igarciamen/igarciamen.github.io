@@ -461,22 +461,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   margin-bottom: 16px;
 }
 
-/* Tarjetas de la página "Projects": se ve todo (descripción completa,
-   todas las tecnologías y los enlaces) sin necesidad de abrir el modal. */
-.project-card--full .desc {
-  display: block;
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
-  overflow: visible;
-}
-.project-card--full .tags { margin-bottom: 16px; }
-.project-card--full .links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 0 24px;
-}
-
 .tags {
   display: flex;
   flex-wrap: wrap;
