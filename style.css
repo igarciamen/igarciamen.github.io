@@ -461,6 +461,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   margin-bottom: 16px;
 }
 
+.project-card .links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 24px;
+  margin-top: 16px;
+}
+
 .tags {
   display: flex;
   flex-wrap: wrap;

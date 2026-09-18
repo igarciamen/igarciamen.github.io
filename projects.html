@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Projects</title>
-	<link rel="stylesheet" href="style.css?v=65">
+	<link rel="stylesheet" href="style.css?v=67">
 </head>
 <body>
 
@@ -138,6 +138,11 @@
 					<div class="tags">
 						${(p.stack || []).slice(0, 4).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}
 					</div>
+					<div class="links" onclick="event.stopPropagation()">
+						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Demo English</a>` : ''}
+						${p.demoUrlFr ? `<a href="${escapeHtml(p.demoUrlFr)}" target="_blank" rel="noopener" class="btn btn-sm">Demo French</a>` : ''}
+						${p.githubUrl ? `<a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener" class="btn btn-sm">See code</a>` : ''}
+					</div>
 				</div>
 			`).join('');
 		}
@@ -153,8 +158,8 @@
 					<p class="desc">${escapeHtml(p.description)}</p>
 					<div class="tags">${(p.stack || []).map(t => `<span class="tag-pill">${escapeHtml(t)}</span>`).join('')}</div>
 					<div class="links">
-						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Watch demo (English)</a>` : ''}
-						${p.demoUrlFr ? `<a href="${escapeHtml(p.demoUrlFr)}" target="_blank" rel="noopener" class="btn btn-sm">Watch demo (French)</a>` : ''}
+						${p.demoUrl ? `<a href="${escapeHtml(p.demoUrl)}" target="_blank" rel="noopener" class="btn btn-sm">Demo English</a>` : ''}
+						${p.demoUrlFr ? `<a href="${escapeHtml(p.demoUrlFr)}" target="_blank" rel="noopener" class="btn btn-sm">Demo French</a>` : ''}
 						${p.githubUrl ? `<a href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener" class="btn btn-sm">See code</a>` : ''}
 					</div>
 				</div>
